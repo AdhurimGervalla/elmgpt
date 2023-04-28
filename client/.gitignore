@@ -1,0 +1,16 @@
+# Ignore elm-stuff directory
+elm-stuff/
+
+# Ignore build artifacts
+/build/
+
+# Ignore editor specific files
+.vscode/
+.idea/
+
+# Ignore npm package lock file
+package-lock.json
+
+# Ignore elm-test generated files
+tests/GeneratedCode.elm
+elm-stuff-test/

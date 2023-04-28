@@ -28,20 +28,23 @@ bei der chatGPT Anfragen und Antworten verwaltet werden können.
 
 `elm install`
 
+## Pocketbase Server
+1. Wechsle in das Verzeichnis `server`.
+   ```bash
+   cd server
+   ```
+2. Entpacke das passende zip-File. Achtung bei Mac User die richitge CPU Architektur anwenden.
+3. Nunn sollte es eine Datei `pocketbase` im Verzeichnis `Server` geben.
 
-## Projekt ausführen
-
-### Option 1: Elm Reactor verwenden
-
-Führe den folgenden Befehl aus, um Elm Reactor zu starten:
-`elm reactor`
-
-Öffne deinen Webbrowser und navigiere zu `http://localhost:8000`. Wähle die `src/Main.elm`-Datei aus, um die Anwendung anzuzeigen.
-
-### Option 2: Mit elm-live
-
-Führe den folgenden Befehl aus, um elm-live zu starten:
-
-`elm-live src/HomePage.elm --open -- --output=elm.js`
-
-Elm-live startet einen Webserver und öffnet die Anwendung automatisch in deinem Standard-Webbrowser. Änderungen am Code werden sofort angezeigt, sobald Sie die Datei speichern.
+## Projekt starten
+### Mac
+Führe das start.sh Sctipt aus:
+```bash
+./start.sh
+```
+### Windows
+```bat
+./start.bat
+```
+### Login
+Beim ersten Startup, muss ein Admin Login erstellt werden. Die DB Architektur würde über die `pb_migrations` Dateien gehandelt.
