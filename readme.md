@@ -13,20 +13,11 @@ bei der chatGPT Anfragen und Antworten verwaltet werden können.
 1. Elm installieren:
    Besuche die offizielle Elm-Website (https://elm-lang.org/) und folge dort den Anweisungen.
 
-2. (Optional) elm-live installieren:
-   Wenn elm-live für Live-Entwicklung verwenden werden soll, führe den folgenden Befehl aus:
-   `npm install -g elm-live`
-
-
 ## Projekt einrichten
 
 1. Klone das Repository auf deinem lokalen Computer.
 
 2. Navigieren in der Kommandozeile oder dem Terminal zum Projektordner.
-
-3. Führe den folgenden Befehl aus, um die Elm-Abhängigkeiten zu installieren:
-
-`elm install`
 
 ## Pocketbase Server
 1. Wechsle in das Verzeichnis `server`.
