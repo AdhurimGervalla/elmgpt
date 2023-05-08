@@ -78,7 +78,7 @@ type Msg
 
 apiKey : String
 apiKey =
-    "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"
+    "PUT YOUR API KEY HERE"
 
 url : String
 url =
