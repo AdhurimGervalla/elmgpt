@@ -1,15 +1,20 @@
 module Main exposing (main)
 
 import Browser
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Http
+--import Html exposing (..)
+--import Html.Attributes exposing (..)
+--import Http
 import Json.Decode as Decode exposing (Decoder)
 import Json.Encode as Encode
-import Html.Events exposing (onInput)
-import Html.Events exposing (onClick)
+--import Html.Events exposing (onInput)
+--import Html.Events exposing (onClick)
 import Debug as Debug
 import List exposing (length)
+import Html.Styled exposing (..)
+import Css exposing (..)
+import Html.Styled.Attributes exposing (..)
+import Html.Styled.Events exposing (onInput, onClick)
+import Http exposing (Error)
 
 type alias ChatCompletion = {
     model: String,
@@ -78,7 +83,7 @@ type Msg
 
 apiKey : String
 apiKey =
-    "PUT YOUR API KEY HERE"
+    "ADD KEY HERE"
 
 url : String
 url =
@@ -140,30 +145,86 @@ chatWithAi input model =
         tracker = Nothing
     }
 
-view : Model -> Html Msg
-view model =
-    div [ class "jumbotron" ]
-        [ h1 [] [ text "elmGPT" ],
-            div []
-            [ input
-                [ type_ "text"
+--view : Model -> Html Msg
+--view model =
+--    div [ class "jumbotron" ]
+--        [ h1 [] [ text "elmGPT" ],
+--            div []
+--            [ input
+--                [ type_ "text"
+--                , placeholder "ask the AI"
+--                , value model.inputText
+--                , onInput UpdateInputText
+--                ]
+--                []
+--            , button [ onClick SubmitMessage ] [ text "Send Message" ]
+--            ],
+--            h1 [] [ if (length model.choices) > 0 then text "AI Chat" else text ""], 
+--            ul [] (List.map viewMessage model.choices)
+--        ]
+imageButton : String -> Html Msg --                                              Method call here
+imageButton path = styled button [border (px 0), backgroundColor (rgba 0 0 0 0)] [] [ 
+  styled img [Css.width (px 25), Css.height (px 25), marginRight (px 50) ] [src path] []] 
+
+btn : List (Attribute msg) -> List (Html msg) -> Html msg
+btn =
+    styled button
+        [
+          color (rgb 0 0 0)
+        , hover
+            [ 
+            color (rgb 255 255 255)
+            , textDecoration underline
+            ]
+        , Css.width (px 50)
+        , Css.height (px 50)
+        , marginLeft (px 10)
+        ]
+
+
+footer : Html Msg
+footer = styled div [position fixed, left (px 0), bottom (px 0),
+                     Css.width (pct 100), Css.height (px 40), backgroundColor (rgb 200 200 200),
+                     displayFlex, justifyContent center] [] [styled div [position absolute, top (pct 50), transform (translateY (pct -50))] [] [
+                      imageButton "./Images/Heart-Icon.png" , imageButton "./Images/Home-Icon.svg"]]
+
+mainStyle : List (Style)
+mainStyle = [ 
+              displayFlex,
+              flexDirection row,
+              margin auto
+            ]
+
+view : Model ->  Html Msg
+view model = styled div [margin (px 0)] []
+  [ 
+    styled div [marginTop (px 100)] [] [
+      styled Html.Styled.form [ displayFlex, justifyContent center] [] [
+        styled div mainStyle [] [
+          styled input [Css.width (px 400)] [
+                  type_ "text"
                 , placeholder "ask the AI"
                 , value model.inputText
-                , onInput UpdateInputText
-                ]
-                []
-            , button [ onClick SubmitMessage ] [ text "Send Message" ]
-            ],
-            h1 [] [ if (length model.choices) > 0 then text "AI Chat" else text ""], 
-            ul [] (List.map viewMessage model.choices)
+                , onInput UpdateInputText] []
+          ,btn [onClick SubmitMessage, type_ "button"] [text "GO!" ]
         ]
+    ]
+  , styled div [displayFlex, justifyContent center, marginRight (px 100), marginLeft (px 100), marginTop (px 50)] [] [
+        h1 [] [ if (length model.choices) > 0 then text "AI Chat" else text ""], 
+        ul [] (List.map viewMessage model.choices)
+  ]
+  , footer
+
+  ]    
+  ]
+
 
 
 main : Program () Model Msg
 main =
     Browser.element
         { init = init
-        , view = view
+        , view = view >> Html.Styled.toUnstyled
         , update = update
         , subscriptions = subscriptions
         }
