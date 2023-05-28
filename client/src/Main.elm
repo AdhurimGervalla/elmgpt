@@ -41,10 +41,16 @@ type alias Choice =
     , index : Int
     }
 
+type alias Conversation =
+    { messages : List Message
+    , scraped : Bool
+    }
+
 
 -- Source: https://package.elm-lang.org/packages/elm/http/2.0.0
 
 type alias ApiResponse = { choices: List Choice }
+type alias ApiResponsePocketbase = { id: String, collectionId: String, collectionName: String, created: String, updated: String, messages: List Message, scraped: Bool }
 
 decodeApiResponse : Decoder ApiResponse
 decodeApiResponse =
@@ -57,6 +63,17 @@ decodeChoice =
         (Decode.field "message" decodeMessage)
         (Decode.field "finish_reason" Decode.string)
         (Decode.field "index" Decode.int)
+
+decodeApiResponsePocketbase : Decoder ApiResponsePocketbase
+decodeApiResponsePocketbase =
+    Decode.map7 ApiResponsePocketbase
+        (Decode.field "id" Decode.string)
+        (Decode.field "collectionId" Decode.string)
+        (Decode.field "collectionName" Decode.string)
+        (Decode.field "created" Decode.string)
+        (Decode.field "updated" Decode.string)
+        (Decode.field "messages" (Decode.list decodeMessage))
+        (Decode.field "scraped" Decode.bool)
 
 roleDecoder: String -> Decoder Role
 roleDecoder str =
@@ -78,12 +95,15 @@ decodeRole =
 
 type Msg
   = GotResponse (Result Http.Error ApiResponse)
+    | GotResponseFromPocketbase (Result Http.Error ApiResponsePocketbase)
     | UpdateInputText String
     | SubmitMessage
+    | BookmarkMessage
+    | DeleteMessage
 
 apiKey : String
 apiKey =
-    "ADD KEY HERE"
+    "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"
 
 url : String
 url =
@@ -116,6 +136,12 @@ encodeChatCompletion chatCompletion =
         , ( "temperature", Encode.float chatCompletion.temperature )
         ]
 
+encodeConversation : Conversation -> Encode.Value
+encodeConversation conversation =
+    Encode.object
+        [ ( "messages", Encode.list encodeMessage conversation.messages )
+        , ( "scraped", Encode.bool conversation.scraped )
+        ]
 
 decodeMessage : Decoder Message
 decodeMessage =
@@ -144,6 +170,25 @@ chatWithAi input model =
         timeout = Nothing,
         tracker = Nothing
     }
+
+bookmarkChat : Conversation -> Cmd Msg
+bookmarkChat conversation = 
+    let
+        requestBody = encodeConversation conversation
+        requestBodyJsonString = Encode.encode 2 requestBody
+        _ = Debug.log "Request Body" requestBodyJsonString
+    in
+        Http.request
+        {
+            method = "POST",
+            headers = [],
+            url = "http://127.0.0.1:8090/api/collections/docs/records",
+            body = Http.jsonBody requestBody,
+            expect = Http.expectJson GotResponseFromPocketbase decodeApiResponsePocketbase,
+            timeout = Nothing,
+            tracker = Nothing
+        }
+    
 
 --view : Model -> Html Msg
 --view model =
@@ -211,6 +256,15 @@ view model = styled div [margin (px 0)] []
     ]
   , styled div [displayFlex, justifyContent center, marginRight (px 100), marginLeft (px 100), marginTop (px 50)] [] [
         h1 [] [ if (length model.choices) > 0 then text "AI Chat" else text ""], 
+        div [] 
+        (if (length model.choices) > 0 
+            then 
+                [ button [onClick BookmarkMessage, type_ "button"] [ text "Save" ]
+                , button [onClick DeleteMessage] [ text "Delete" ] 
+                ]
+            else 
+                [ text "" ]
+        ),
         ul [] (List.map viewMessage model.choices)
   ]
   , footer
@@ -256,6 +310,20 @@ update msg model =
                     in
                     ( model, Cmd.none )
 
+        GotResponseFromPocketbase result ->
+            case result of
+                Ok apiResponse ->
+                    let
+                        _ = Debug.log "API Response" apiResponse
+                    in
+                    ( {model | choices = [], inputText = ""}, Cmd.none )
+
+                Err httpError ->
+                    let
+                        _ = Debug.log "HTTP Error" httpError
+                    in
+                    ( model, Cmd.none )
+
         UpdateInputText newText ->
             ( { model | inputText = newText }, Cmd.none )
 
@@ -265,6 +333,14 @@ update msg model =
                 _ = Debug.log "Input Message" model.inputText
             in
             ( model, cmd )
+        BookmarkMessage ->
+            let
+                data = { messages = (List.map (\c -> c.message) model.choices), scraped = False }
+                cmd = bookmarkChat data
+                _ = Debug.log "data to save in pocketbase" data
+            in
+            ( model, cmd)
+        DeleteMessage ->( {model | choices = [], inputText = ""}, Cmd.none )
 
 viewMessage : Choice -> Html Msg
 viewMessage choice =
