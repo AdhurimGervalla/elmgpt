@@ -103,7 +103,7 @@ type Msg
 
 apiKey : String
 apiKey =
-    "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"
+    "ENTER YOUR API KEY HERE"
 
 url : String
 url =
