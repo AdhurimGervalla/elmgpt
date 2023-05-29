@@ -117,7 +117,7 @@ type Msg
 
 apiKey : String
 apiKey =
-    "Enter your API key here"
+    "ENTER YOUR API KEY HERE"
 
 url : String
 url =
@@ -263,7 +263,7 @@ viewSuggestedQuestions model =
         matchedMessages = List.filter (\message -> String.contains model.inputText message.content) userMessages
         allContent = List.map (\item -> item.content) matchedMessages
     in
-        div [] [if model.inputText /= "" then ul [] (List.map (\content -> li [] [text content]) allContent) else text ""]
+        div [] [if model.inputText /= "" then datalist [id "aiSearch"] (List.map (\content -> option [] [text content]) allContent) else text ""]
 
 view : Model ->  Html Msg
 view model = styled div [margin (px 0)] []
@@ -273,6 +273,7 @@ view model = styled div [margin (px 0)] []
         styled div mainStyle [] [
           styled input [Css.width (px 400)] [
                   type_ "text"
+                , list "aiSearch"
                 , placeholder "Ask the AI"
                 , value model.inputText
                 , onInput UpdateInputText] []
@@ -293,7 +294,6 @@ view model = styled div [margin (px 0)] []
         ul [] (List.map viewMessage model.choices)
   ]
   , footer
-
   ]    
   ]
 
