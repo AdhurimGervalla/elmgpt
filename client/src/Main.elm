@@ -34,6 +34,7 @@ type alias Message =
 type alias Model =
     { inputText : String
     , choices : List Choice
+    , suggestedQuestions : List ApiResponsePocketbase
     }
 type alias Choice =
     { message : Message
@@ -51,11 +52,13 @@ type alias Conversation =
 
 type alias ApiResponse = { choices: List Choice }
 type alias ApiResponsePocketbase = { id: String, collectionId: String, collectionName: String, created: String, updated: String, messages: List Message, scraped: Bool }
+type alias ApiResponsePocketbaseList = {page: Int, perPage: Int, totalPages: Int, totalItems: Int, items: List ApiResponsePocketbase }
+
 
 decodeApiResponse : Decoder ApiResponse
 decodeApiResponse =
     Decode.map ApiResponse
-        (Decode.field "choices" <| Decode.list decodeChoice)
+        (Decode.field "choices" (Decode.list decodeChoice))
 
 decodeChoice : Decoder Choice
 decodeChoice =
@@ -74,6 +77,16 @@ decodeApiResponsePocketbase =
         (Decode.field "updated" Decode.string)
         (Decode.field "messages" (Decode.list decodeMessage))
         (Decode.field "scraped" Decode.bool)
+
+
+decodeApiResponseFromPocketbaseList : Decoder ApiResponsePocketbaseList
+decodeApiResponseFromPocketbaseList =
+    Decode.map5 ApiResponsePocketbaseList
+        (Decode.field "page" Decode.int)
+        (Decode.field "perPage" Decode.int)
+        (Decode.field "totalPages" Decode.int)
+        (Decode.field "totalItems" Decode.int)
+        (Decode.field "items" (Decode.list decodeApiResponsePocketbase))
 
 roleDecoder: String -> Decoder Role
 roleDecoder str =
@@ -97,6 +110,7 @@ type Msg
   = GotResponse (Result Http.Error ApiResponse)
     | GotResponseFromPocketbase (Result Http.Error ApiResponsePocketbase)
     | UpdateInputText String
+    | ReceiveSuggestedQuestions (Result Http.Error ApiResponsePocketbaseList)
     | SubmitMessage
     | BookmarkMessage
     | DeleteMessage
@@ -241,6 +255,16 @@ mainStyle = [
               margin auto
             ]
 
+viewSuggestedQuestions : Model -> Html Msg
+viewSuggestedQuestions model =
+    let 
+        allMessages = List.concatMap (\apiResponse -> apiResponse.messages) model.suggestedQuestions
+        userMessages = List.filter (\message -> message.role == User) allMessages
+        matchedMessages = List.filter (\message -> String.contains model.inputText message.content) userMessages
+        allContent = List.map (\item -> item.content) matchedMessages
+    in
+        div [] [if model.inputText /= "" then ul [] (List.map (\content -> li [] [text content]) allContent) else text ""]
+
 view : Model ->  Html Msg
 view model = styled div [margin (px 0)] []
   [ 
@@ -249,12 +273,12 @@ view model = styled div [margin (px 0)] []
         styled div mainStyle [] [
           styled input [Css.width (px 400)] [
                   type_ "text"
-                , placeholder "ask the AI"
+                , placeholder "Ask the AI"
                 , value model.inputText
                 , onInput UpdateInputText] []
           ,btn [onClick SubmitMessage, type_ "button"] [text "GO!" ]
         ]
-    ]
+    ], viewSuggestedQuestions model
   , styled div [displayFlex, justifyContent center, marginRight (px 100), marginLeft (px 100), marginTop (px 50)] [] [
         h1 [] [ if (length model.choices) > 0 then text "AI Chat" else text ""], 
         div [] 
@@ -286,13 +310,25 @@ main =
 
 init : flags -> ( Model, Cmd Msg )
 init _ =
-    ( { inputText = "", choices = [] }, Cmd.none )
+    ( { inputText = "", choices = [], suggestedQuestions = [] }, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.none
 
+
+getSuggestedQuestionsCmd : String -> Cmd Msg
+getSuggestedQuestionsCmd input =
+    let
+        uri = "http://127.0.0.1:8090/api/collections/docs/records"
+        _ = Debug.log "uri is: " uri
+    in
+        Http.get
+        {
+            url = uri,
+            expect = Http.expectJson ReceiveSuggestedQuestions decodeApiResponseFromPocketbaseList
+        }
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -301,7 +337,7 @@ update msg model =
             case result of
                 Ok apiResponse ->
                     let
-                        _ = Debug.log "API Response" apiResponse
+                        _ = Debug.log "API Response Chat GPT" apiResponse
                     in
                     ( {model | choices = model.choices ++ List.map (\i -> i) apiResponse.choices}, Cmd.none )
 
@@ -315,7 +351,7 @@ update msg model =
             case result of
                 Ok apiResponse ->
                     let
-                        _ = Debug.log "API Response" apiResponse
+                        _ = Debug.log "API Response Pocketbase" apiResponse
                     in
                     ( {model | choices = [], inputText = ""}, Cmd.none )
 
@@ -326,19 +362,34 @@ update msg model =
                     ( model, Cmd.none )
 
         UpdateInputText newText ->
-            ( { model | inputText = newText }, Cmd.none )
+            ( { model | inputText = newText },  getSuggestedQuestionsCmd newText )
+
+        ReceiveSuggestedQuestions result ->
+            case result of
+                Ok suggestedQuestions ->
+                    let
+                        _ = Debug.log "Suggested Questions" suggestedQuestions.items
+                    in
+                    ( {model | suggestedQuestions = suggestedQuestions.items}, Cmd.none )
+
+                Err httpError ->
+                    let
+                        _ = Debug.log "HTTP Error" httpError
+                    in
+                    ( model, Cmd.none )
 
         SubmitMessage ->
             let
+                userMessage = { message = { role = User, content = model.inputText }, finish_reason = "", index = 0 }
                 cmd = chatWithAi model.inputText model
                 _ = Debug.log "Input Message" model.inputText
             in
-            ( model, cmd )
+            ( { model | choices = model.choices ++ [userMessage], inputText = "" }, cmd )
         BookmarkMessage ->
             let
                 data = { messages = (List.map (\c -> c.message) model.choices), scraped = False }
                 cmd = bookmarkChat data
-                _ = Debug.log "data to save in pocketbase" data
+                _ = Debug.log "data to save in pocketbase" model.choices
             in
             ( model, cmd)
         DeleteMessage ->( {model | choices = [], inputText = ""}, Cmd.none )
