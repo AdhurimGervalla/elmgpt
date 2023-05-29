@@ -207,7 +207,7 @@ bookmarkChat conversation =
 
 apiKey : String
 apiKey =
-    "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"
+    "ENTER YOUR API KEY HERE"
 
 url : String
 url =
