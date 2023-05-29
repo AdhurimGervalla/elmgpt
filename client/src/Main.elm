@@ -103,7 +103,7 @@ type Msg
 
 apiKey : String
 apiKey =
-    "ENTER YOUR API KEY HERE"
+    "Enter your API key here"
 
 url : String
 url =
@@ -230,6 +230,7 @@ btn =
 footer : Html Msg
 footer = styled div [position fixed, left (px 0), bottom (px 0),
                      Css.width (pct 100), Css.height (px 40), backgroundColor (rgb 200 200 200),
+                     paddingTop (px 10), paddingBottom (px 7),
                      displayFlex, justifyContent center] [] [styled div [position absolute, top (pct 50), transform (translateY (pct -50))] [] [
                       imageButton "./Images/Heart-Icon.png" , imageButton "./Images/Home-Icon.svg"]]
 
