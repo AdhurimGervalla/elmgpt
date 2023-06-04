@@ -27,6 +27,7 @@ type alias Message =
 type alias Model =
     { inputText : String
     , choices : List Choice
+    , detail : List Message
     , suggestedQuestions : List ApiResponsePocketbase
     }
 type alias Choice =
