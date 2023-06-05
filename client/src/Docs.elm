@@ -20,4 +20,4 @@ viewDetail slug model =
     in
     styled div 
         [ margin (px 0) ] 
-        [] [h1 [] [ text "detail page"]]
+        [] [h1 [] [ text slug]]
