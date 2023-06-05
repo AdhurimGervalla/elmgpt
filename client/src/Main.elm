@@ -8,6 +8,8 @@ import Browser.Navigation as Nav
 import Url
 import Home
 import Docs
+import UriParser as Parser
+import Url.Parser as Parser exposing ((</>), Parser)
 
 main : Program () Model Msg
 main =
@@ -57,21 +59,18 @@ update msg model =
     case msg of
         LinkClicked urlRequest ->
             case urlRequest of
-                Browser.Internal uerel ->
-                    ( model, Nav.pushUrl model.key (Url.toString uerel) )
+                Browser.Internal url ->
+                    ( model, Nav.pushUrl model.key (Url.toString url) )
 
                 Browser.External href ->
                     ( model, Nav.load href )
 
         UrlChanged url ->
             let
-                page =
-                    if url.path == "/docs" then
-                        DocsPage
-                    else
-                        HomePage
+                _ = Debug.log "URL Changed" url
+                newPage = Maybe.withDefault HomePage (Parser.parse Parser.pageParser url)
             in
-            ( { model | url = url, page = page }
+            ( { model | url = url, page = newPage }
             , Cmd.none
             )
         GotResponse result ->
