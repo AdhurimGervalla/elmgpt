@@ -66,10 +66,14 @@ update msg model =
         UrlChanged url ->
             let
                 page =
-                    if url.path == "/docs" then
-                        DocsPage
-                    else
-                        HomePage
+                   case String.split "/" url.path of
+                        [ "", "docs", "issue-id", id ] ->
+                             DocsDetailPage id
+
+                        [ "", "docs" ] ->
+                             DocsPage
+
+                        _ -> HomePage
             in
             ( { model | url = url, page = page }
             , Cmd.none

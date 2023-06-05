@@ -145,7 +145,7 @@ bookmarkChat conversation =
 
 apiKey : String
 apiKey =
-    "YOUR API KEY"
+    ""
 
 url : String
 url =
