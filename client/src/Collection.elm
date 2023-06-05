@@ -130,15 +130,18 @@ mainStyle = [
 
 viewDocsList : Model -> Html Msg
 viewDocsList model =
-        div [] (List.map (\content -> viewDocsItem content) model.suggestedQuestions)
+        styled div [displayFlex] [] (List.map (\content -> viewDocsItem content) model.suggestedQuestions)
 
 
 viewDocsItem : ApiResponsePocketbase -> Html Msg
 viewDocsItem item =
-          a  []
+
+          styled a [flexBasis (pct 100)] []
            [
-            styled div [margin (px 8), border3 (px 1) solid (rgb 0 0 0)] [] [
-                 text item.id
+            styled div [margin (px 8), padding (px 8), boxShadow5 (px 1) (px 1) (px 4) (px 4) (rgba 150 150 150 0.2), border3 (px 1) solid (rgb 200 200 200)] [] [
+                 styled div [displayFlex, flexDirection column] [] (List.map(\message -> span [] [text message.content]) item.messages),
+                  text "more",
+                  text item.id
               ]
             ]
 
