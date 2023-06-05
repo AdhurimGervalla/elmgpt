@@ -4,7 +4,7 @@ import Browser
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (..)
 import Types exposing (..)
-import Home exposing (..)
+import Collection exposing (..)
 
 main : Program () Model Msg
 main =
@@ -17,7 +17,7 @@ main =
 
 init : flags -> ( Model, Cmd Msg )
 init _ =
-    ( { inputText = "", choices = [], suggestedQuestions = [] }, Cmd.none )
+    ( { inputText = "", choices = [], suggestedQuestions = [] }, getSuggestedQuestionsCmd )
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
