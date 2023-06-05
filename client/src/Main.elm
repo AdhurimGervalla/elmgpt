@@ -8,6 +8,8 @@ import Browser.Navigation as Nav
 import Url
 import Home
 import Docs
+import UriParser as Parser
+import Url.Parser as Parser exposing ((</>), Parser)
 
 main : Program () Model Msg
 main =
@@ -57,8 +59,8 @@ update msg model =
     case msg of
         LinkClicked urlRequest ->
             case urlRequest of
-                Browser.Internal uerel ->
-                    ( model, Nav.pushUrl model.key (Url.toString uerel) )
+                Browser.Internal url ->
+                    ( model, Nav.pushUrl model.key (Url.toString url) )
 
                 Browser.External href ->
                     ( model, Nav.load href )
@@ -75,7 +77,7 @@ update msg model =
 
                         _ -> HomePage
             in
-            ( { model | url = url, page = page }
+            ( { model | url = url, page = newPage }
             , Cmd.none
             )
         GotResponse result ->

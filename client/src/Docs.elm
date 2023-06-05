@@ -6,6 +6,9 @@ import Html.Styled.Attributes exposing (..)
 
 view : Model ->  Html Msg
 view model = 
+    let 
+        _ = Debug.log "model" model
+    in
     styled div 
         [ margin (px 0) ] 
         [] [a  [href "/docs/issue-id/1avs214-123"] [text "Detailpage"]]
