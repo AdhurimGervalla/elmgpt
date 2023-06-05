@@ -1,7 +1,18 @@
 module Types exposing (..)
 import Http exposing (Error)
+import Browser.Navigation as Nav
+import Browser
+import Url
+
+type Page
+    = HomePage
+    | DocsPage
+    | DocsDetailPage String
+
 type Msg
-  = GotResponse (Result Http.Error ApiResponse)
+  = LinkClicked Browser.UrlRequest
+    | UrlChanged Url.Url
+    | GotResponse (Result Http.Error ApiResponse)
     | GotResponseFromPocketbase (Result Http.Error ApiResponsePocketbase)
     | UpdateInputText String
     | ReceiveSuggestedQuestions (Result Http.Error ApiResponsePocketbaseList)
@@ -25,9 +36,12 @@ type alias Message =
     }
 
 type alias Model =
-    { inputText : String
+    { key : Nav.Key
+    , url : Url.Url
+    , inputText : String
     , choices : List Choice
     , suggestedQuestions : List ApiResponsePocketbase
+    , page : Page
     }
 type alias Choice =
     { message : Message

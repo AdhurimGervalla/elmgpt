@@ -7,3 +7,4 @@ fi
 
 cd server && ./pocketbase serve &
 cd client && elm reactor
+# cd client && elm make src/Main.elm --output=main.js && http-server .
