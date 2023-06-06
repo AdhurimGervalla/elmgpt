@@ -1,17 +1,27 @@
 module Docs exposing (..)
 import Footer exposing (appFooter)
-import Html.Styled.Attributes exposing (href)
+import Html.Styled.Attributes exposing (href, list, placeholder, type_, value)
+import Html.Styled.Events exposing (onInput)
+import List exposing (filter, foldl)
+import String exposing (contains, toUpper)
 import Types exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
 
 view : Model -> Html Msg
-view model = styled div [margin (px 0)] []
+view model =
+    let
+        filteredItems = filter (\i -> containsKeyword i model.docsFilterText) model.suggestedQuestions
+    in
+      styled div [margin (px 0)] []
           [
-          styled div [displayFlex, flexWrap wrap] [] (List.map (\content -> viewDocsItem content) model.suggestedQuestions),
+          viewFilterInput model,
+          styled div [displayFlex, flexWrap wrap] [] (List.map (\content -> viewDocsItem content) filteredItems),
           appFooter
           ]
 
+containsKeyword: ApiResponsePocketbase -> String -> Bool
+containsKeyword item query = foldl (||) False (List.map (\i -> contains (toUpper query) (toUpper i.content)) item.messages)
 
 viewDocsItem : ApiResponsePocketbase -> Html Msg
 viewDocsItem item =
@@ -22,6 +32,14 @@ viewDocsItem item =
                   text "more"
               ]
             ]
+
+viewFilterInput: Model -> Html Msg
+viewFilterInput model = styled input [margin2 (px 12) (px 8), Css.width (px 400)] [
+                    type_ "text"
+                  , placeholder "Search for Conversation"
+                  , value model.docsFilterText
+                  , onInput UpdateDocsFilterText] []
+
 
 viewDetail : String -> Model ->  Html Msg
 viewDetail slug model = 

@@ -27,6 +27,7 @@ init flags url key =
     ( { key = key
       , url = url
       , inputText = ""
+      , docsFilterText = ""
       , choices = []
       , suggestedQuestions = []
       , page = HomePage
@@ -110,6 +111,9 @@ update msg model =
 
         UpdateInputText newText ->
             ( { model | inputText = newText },  getSuggestedQuestionsCmd )
+
+        UpdateDocsFilterText newText ->
+             ( { model | docsFilterText = newText },  Cmd.none )
 
         ReceiveSuggestedQuestions result ->
             case result of

@@ -15,6 +15,7 @@ type Msg
     | GotResponse (Result Http.Error ApiResponse)
     | GotResponseFromPocketbase (Result Http.Error ApiResponsePocketbase)
     | UpdateInputText String
+    | UpdateDocsFilterText String
     | ReceiveSuggestedQuestions (Result Http.Error ApiResponsePocketbaseList)
     | SubmitMessage
     | BookmarkMessage
@@ -39,6 +40,7 @@ type alias Model =
     { key : Nav.Key
     , url : Url.Url
     , inputText : String
+    , docsFilterText: String
     , choices : List Choice
     , suggestedQuestions : List ApiResponsePocketbase
     , page : Page
