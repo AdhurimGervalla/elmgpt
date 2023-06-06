@@ -31,7 +31,7 @@ init flags url key =
       , suggestedQuestions = []
       , page = HomePage
       }
-    , Cmd.none
+    , getSuggestedQuestionsCmd
     )
 
 
@@ -67,7 +67,7 @@ update msg model =
 
         UrlChanged url ->
             let
-                page =
+                newPage =
                    case String.split "/" url.path of
                         [ "", "docs", "issue-id", id ] ->
                              DocsDetailPage id
@@ -109,7 +109,7 @@ update msg model =
                     ( model, Cmd.none )
 
         UpdateInputText newText ->
-            ( { model | inputText = newText },  getSuggestedQuestionsCmd newText )
+            ( { model | inputText = newText },  getSuggestedQuestionsCmd )
 
         ReceiveSuggestedQuestions result ->
             case result of
