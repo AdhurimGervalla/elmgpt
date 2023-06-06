@@ -31,6 +31,7 @@ init flags url key =
       , choices = []
       , suggestedQuestions = []
       , page = HomePage
+      , detailPage =  { id = "", collectionId = "", collectionName = "", created = "", updated = "", messages = [], scraped = False }
       }
     , getSuggestedQuestionsCmd
     )
@@ -58,6 +59,26 @@ viewPage page model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        GetOneFromPocketbase slug ->
+            let
+                cmd = Docs.getOne slug
+            in
+            ( model, cmd)
+
+        GotResponseFromOnePocketbase result ->
+            case result of
+                Ok apiResponse ->
+                    let
+                        _ = Debug.log "Detail APi Call" apiResponse
+                    in
+                    ( {model | detailPage = apiResponse}, Cmd.none )
+
+                Err httpError ->
+                    let
+                        _ = Debug.log "HTTP Error" httpError
+                    in
+                    ( model, Cmd.none )
+
         LinkClicked urlRequest ->
             case urlRequest of
                 Browser.Internal url ->

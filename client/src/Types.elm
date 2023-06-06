@@ -20,6 +20,8 @@ type Msg
     | SubmitMessage
     | BookmarkMessage
     | DeleteMessage
+    | GetOneFromPocketbase String
+    | GotResponseFromOnePocketbase (Result Http.Error ApiResponsePocketbase)
 
 type alias ChatCompletion = {
     model: String,
@@ -43,8 +45,10 @@ type alias Model =
     , docsFilterText: String
     , choices : List Choice
     , suggestedQuestions : List ApiResponsePocketbase
+    , detailPage : ApiResponsePocketbase
     , page : Page
     }
+
 type alias Choice =
     { message : Message
     , finish_reason : String

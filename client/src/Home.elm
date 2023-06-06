@@ -55,9 +55,6 @@ getSuggestedQuestionsCmd =
             expect = Http.expectJson ReceiveSuggestedQuestions decodeApiResponseFromPocketbaseList
         }
 
-
-
-
 mainStyle : List (Style)
 mainStyle = [ 
               displayFlex,
