@@ -27,7 +27,7 @@ view model = styled div [margin (px 0)] []
           ,btn [onClick SubmitMessage, type_ "button"] [text "GO!" ]
         ]
     ], viewSuggestedQuestions model
-  , styled div [marginRight (px 100), marginLeft (auto), marginTop (auto), maxWidth (px 800)] [] [
+  , styled div [marginRight (px 100), marginLeft (px 100), marginTop (px 60), maxWidth (px 800)] [] [
         h1 [] [ if (length model.choices) > 0 then text "AI Chat" else text ""], 
         div [] 
         (if (length model.choices) > 0 
