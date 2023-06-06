@@ -28,8 +28,11 @@ btn =
         ]
 
 appFooter : Html Msg
-appFooter = styled div [position fixed, left (px 0), bottom (px 0),
-                     Css.width (pct 100), Css.height (px 40), backgroundColor (rgb 200 200 200),
-                     paddingTop (px 10), paddingBottom (px 7),
-                     displayFlex, justifyContent center] [] [styled div [position absolute, top (pct 50), transform (translateY (pct -50))] [] [
+appFooter = styled div [position fixed, left (px 0), bottom (px 0)
+                     , Css.width (pct 100), Css.height (px 60)
+                     --, backgroundColor (rgb 200 200 200)
+                     , paddingTop (px 10), paddingBottom (px 7)
+                     , boxShadow5 (px 1) (px 1) (px 4) (px 4) (rgba 150 150 150 0.2)
+                     
+                     , displayFlex, justifyContent center] [] [styled div [position absolute, top (pct 50), transform (translateY (pct -50))] [] [
                       imageButton "/docs" "./Images/Heart-Icon.png" , imageButton "/" "./Images/Home-Icon.svg"]]
