@@ -8,9 +8,6 @@ import Browser.Navigation as Nav
 import Url
 import Home
 import Docs
-import UriParser as Parser
-import Url.Parser as Parser exposing ((</>), Parser)
-import Footer exposing (appFooter)
 
 main : Program () Model Msg
 main =
