@@ -39,7 +39,7 @@ viewDocsItem item =
             ]
 
 viewFilterInput: Model -> Html Msg
-viewFilterInput model = styled input [margin2 (px 12) (px 8), Css.width (px 400)] [
+viewFilterInput model = styled input [margin2 (px 12) (px 8), padding  (px 15), fontSize (px 20), marginBottom (px 30), backgroundColor (hex "#ff6c007a"), borderRadius (px 5), border (px 1), borderStyle solid, boxShadow none, Css.width (px 400)] [
                     type_ "text"
                   , placeholder "Search for Conversation"
                   , value model.docsFilterText

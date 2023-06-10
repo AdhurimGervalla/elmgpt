@@ -18,13 +18,13 @@ view model = styled div [margin (px 0), paddingBottom (px 100)] []
     styled div [marginTop (px 100)] [] [
       styled Html.Styled.form [ displayFlex, justifyContent center] [] [
         styled div mainStyle [] [
-          styled input [fontSize (px 20), Css.width (px 400)] [
+          styled input [padding  (px 12), fontSize (px 20), marginBottom (px 30), backgroundColor (hex (if model.apiKey == "" then "#ff00007a" else "#44ff007a")), borderRadius (px 5), border (px 1), borderStyle solid, boxShadow none, Css.width (px 400)] [
                   type_ "text"
                 , list "aiSearch"
                 , placeholder (if model.apiKey == "" then "Enter API Key" else "Ask the AI")
                 , value model.inputText
                 , onInput UpdateInputText] []
-          ,btn [onClick (if model.apiKey == "" then SubmitApiKey else SubmitMessage), type_ "button"] [text "GO!" ]
+          , btn [onClick (if model.apiKey == "" then SubmitApiKey else SubmitMessage), type_ "button"] [text "GO!" ]
         ]
     ], viewSuggestedQuestions model
      , styled div [marginRight (auto), marginLeft (auto), marginTop (px 60), maxWidth (px 800)] [] [

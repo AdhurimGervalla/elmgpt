@@ -9464,185 +9464,9 @@ var $author$project$Docs$viewDocsItem = function (item) {
 var $author$project$Types$UpdateDocsFilterText = function (a) {
 	return {$: 'UpdateDocsFilterText', a: a};
 };
-var $rtfeldman$elm_css$Html$Styled$input = $rtfeldman$elm_css$Html$Styled$node('input');
-var $rtfeldman$elm_css$Css$prop2 = F3(
-	function (key, argA, argB) {
-		return A2($rtfeldman$elm_css$Css$property, key, argA.value + (' ' + argB.value));
-	});
-var $rtfeldman$elm_css$Css$margin2 = $rtfeldman$elm_css$Css$prop2('margin');
-var $rtfeldman$elm_css$Html$Styled$Events$alwaysStop = function (x) {
-	return _Utils_Tuple2(x, true);
-};
-var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
-	return {$: 'MayStopPropagation', a: a};
-};
-var $rtfeldman$elm_css$Html$Styled$Events$stopPropagationOn = F2(
-	function (event, decoder) {
-		return A2(
-			$rtfeldman$elm_css$VirtualDom$Styled$on,
-			event,
-			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
-	});
-var $elm$json$Json$Decode$at = F2(
-	function (fields, decoder) {
-		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
-	});
-var $rtfeldman$elm_css$Html$Styled$Events$targetValue = A2(
-	$elm$json$Json$Decode$at,
-	_List_fromArray(
-		['target', 'value']),
-	$elm$json$Json$Decode$string);
-var $rtfeldman$elm_css$Html$Styled$Events$onInput = function (tagger) {
-	return A2(
-		$rtfeldman$elm_css$Html$Styled$Events$stopPropagationOn,
-		'input',
-		A2(
-			$elm$json$Json$Decode$map,
-			$rtfeldman$elm_css$Html$Styled$Events$alwaysStop,
-			A2($elm$json$Json$Decode$map, tagger, $rtfeldman$elm_css$Html$Styled$Events$targetValue)));
-};
-var $rtfeldman$elm_css$Html$Styled$Attributes$placeholder = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('placeholder');
-var $rtfeldman$elm_css$Html$Styled$Attributes$type_ = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('type');
-var $rtfeldman$elm_css$Html$Styled$Attributes$value = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('value');
-var $author$project$Docs$viewFilterInput = function (model) {
-	return A4(
-		$rtfeldman$elm_css$Html$Styled$styled,
-		$rtfeldman$elm_css$Html$Styled$input,
-		_List_fromArray(
-			[
-				A2(
-				$rtfeldman$elm_css$Css$margin2,
-				$rtfeldman$elm_css$Css$px(12),
-				$rtfeldman$elm_css$Css$px(8)),
-				$rtfeldman$elm_css$Css$width(
-				$rtfeldman$elm_css$Css$px(400))
-			]),
-		_List_fromArray(
-			[
-				$rtfeldman$elm_css$Html$Styled$Attributes$type_('text'),
-				$rtfeldman$elm_css$Html$Styled$Attributes$placeholder('Search for Conversation'),
-				$rtfeldman$elm_css$Html$Styled$Attributes$value(model.docsFilterText),
-				$rtfeldman$elm_css$Html$Styled$Events$onInput($author$project$Types$UpdateDocsFilterText)
-			]),
-		_List_Nil);
-};
-var $rtfeldman$elm_css$Css$wrap = {flexDirectionOrWrap: $rtfeldman$elm_css$Css$Structure$Compatible, flexWrap: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'wrap'};
-var $author$project$Docs$view = function (model) {
-	var filteredItems = A2(
-		$elm$core$List$filter,
-		function (i) {
-			return A2($author$project$Docs$containsKeyword, i, model.docsFilterText);
-		},
-		model.suggestedQuestions);
-	return A4(
-		$rtfeldman$elm_css$Html$Styled$styled,
-		$rtfeldman$elm_css$Html$Styled$div,
-		_List_fromArray(
-			[
-				$rtfeldman$elm_css$Css$margin(
-				$rtfeldman$elm_css$Css$px(0)),
-				$rtfeldman$elm_css$Css$padding(
-				$rtfeldman$elm_css$Css$px(100))
-			]),
-		_List_Nil,
-		_List_fromArray(
-			[
-				A2(
-				$rtfeldman$elm_css$Html$Styled$h1,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$rtfeldman$elm_css$Html$Styled$text('Bookmarked Conversations')
-					])),
-				$author$project$Docs$viewFilterInput(model),
-				A4(
-				$rtfeldman$elm_css$Html$Styled$styled,
-				$rtfeldman$elm_css$Html$Styled$div,
-				_List_fromArray(
-					[
-						$rtfeldman$elm_css$Css$displayFlex,
-						$rtfeldman$elm_css$Css$flexWrap($rtfeldman$elm_css$Css$wrap)
-					]),
-				_List_Nil,
-				A2(
-					$elm$core$List$map,
-					function (content) {
-						return $author$project$Docs$viewDocsItem(content);
-					},
-					filteredItems)),
-				$author$project$Footer$appFooter
-			]));
-};
-var $author$project$Types$BookmarkMessage = {$: 'BookmarkMessage'};
-var $author$project$Types$DeleteMessage = {$: 'DeleteMessage'};
-var $author$project$Types$SubmitApiKey = {$: 'SubmitApiKey'};
-var $author$project$Types$SubmitMessage = {$: 'SubmitMessage'};
-var $author$project$Types$UpdateInputText = function (a) {
-	return {$: 'UpdateInputText', a: a};
-};
-var $rtfeldman$elm_css$Css$auto = {alignItemsOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, cursor: $rtfeldman$elm_css$Css$Structure$Compatible, flexBasis: $rtfeldman$elm_css$Css$Structure$Compatible, intOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, justifyContentOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAutoOrCoverOrContain: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNumberOrAutoOrNoneOrContent: $rtfeldman$elm_css$Css$Structure$Compatible, overflow: $rtfeldman$elm_css$Css$Structure$Compatible, pointerEvents: $rtfeldman$elm_css$Css$Structure$Compatible, tableLayout: $rtfeldman$elm_css$Css$Structure$Compatible, textRendering: $rtfeldman$elm_css$Css$Structure$Compatible, touchAction: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'auto'};
-var $rtfeldman$elm_css$Css$Preprocess$ExtendSelector = F2(
-	function (a, b) {
-		return {$: 'ExtendSelector', a: a, b: b};
-	});
-var $rtfeldman$elm_css$Css$Structure$PseudoClassSelector = function (a) {
-	return {$: 'PseudoClassSelector', a: a};
-};
-var $rtfeldman$elm_css$Css$pseudoClass = function (_class) {
-	return $rtfeldman$elm_css$Css$Preprocess$ExtendSelector(
-		$rtfeldman$elm_css$Css$Structure$PseudoClassSelector(_class));
-};
-var $rtfeldman$elm_css$Css$hover = $rtfeldman$elm_css$Css$pseudoClass('hover');
-var $rtfeldman$elm_css$Css$marginLeft = $rtfeldman$elm_css$Css$prop1('margin-left');
-var $rtfeldman$elm_css$Css$underline = {textDecorationLine: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'underline'};
-var $author$project$Footer$btn = A2(
-	$rtfeldman$elm_css$Html$Styled$styled,
-	$rtfeldman$elm_css$Html$Styled$button,
-	_List_fromArray(
-		[
-			$rtfeldman$elm_css$Css$color(
-			A3($rtfeldman$elm_css$Css$rgb, 0, 0, 0)),
-			$rtfeldman$elm_css$Css$hover(
-			_List_fromArray(
-				[
-					$rtfeldman$elm_css$Css$color(
-					A3($rtfeldman$elm_css$Css$rgb, 255, 255, 255)),
-					$rtfeldman$elm_css$Css$textDecoration($rtfeldman$elm_css$Css$underline)
-				])),
-			$rtfeldman$elm_css$Css$width(
-			$rtfeldman$elm_css$Css$px(50)),
-			$rtfeldman$elm_css$Css$height(
-			$rtfeldman$elm_css$Css$px(50)),
-			$rtfeldman$elm_css$Css$marginLeft(
-			$rtfeldman$elm_css$Css$px(10))
-		]));
-var $rtfeldman$elm_css$Html$Styled$Attributes$class = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('className');
-var $rtfeldman$elm_css$Html$Styled$form = $rtfeldman$elm_css$Html$Styled$node('form');
-var $rtfeldman$elm_css$VirtualDom$Styled$attribute = F2(
-	function (key, value) {
-		return A3(
-			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
-			A2($elm$virtual_dom$VirtualDom$attribute, key, value),
-			false,
-			'');
-	});
-var $rtfeldman$elm_css$Html$Styled$Attributes$list = $rtfeldman$elm_css$VirtualDom$Styled$attribute('list');
-var $author$project$Home$mainStyle = _List_fromArray(
-	[
-		$rtfeldman$elm_css$Css$displayFlex,
-		$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
-		$rtfeldman$elm_css$Css$margin($rtfeldman$elm_css$Css$auto)
-	]);
-var $rtfeldman$elm_css$Css$marginTop = $rtfeldman$elm_css$Css$prop1('margin-top');
-var $rtfeldman$elm_css$Css$maxWidth = $rtfeldman$elm_css$Css$prop1('max-width');
-var $rtfeldman$elm_css$Css$borderColor = function (c) {
-	return A2($rtfeldman$elm_css$Css$property, 'border-color', c.value);
-};
-var $rtfeldman$elm_css$Css$prop4 = F5(
-	function (key, argA, argB, argC, argD) {
-		return A2($rtfeldman$elm_css$Css$property, key, argA.value + (' ' + (argB.value + (' ' + (argC.value + (' ' + argD.value))))));
-	});
-var $rtfeldman$elm_css$Css$borderRadius4 = $rtfeldman$elm_css$Css$prop4('border-radius');
+var $rtfeldman$elm_css$Css$borderRadius = $rtfeldman$elm_css$Css$prop1('border-radius');
+var $rtfeldman$elm_css$Css$borderStyle = $rtfeldman$elm_css$Css$prop1('border-style');
+var $rtfeldman$elm_css$Css$boxShadow = $rtfeldman$elm_css$Css$prop1('box-shadow');
 var $rtfeldman$elm_css$Css$withPrecedingHash = function (str) {
 	return A2($elm$core$String$startsWith, '#', str) ? str : A2(
 		$elm$core$String$cons,
@@ -10009,6 +9833,200 @@ var $rtfeldman$elm_css$Css$hex = function (str) {
 	}
 	return $rtfeldman$elm_css$Css$erroneousHex(str);
 };
+var $rtfeldman$elm_css$Html$Styled$input = $rtfeldman$elm_css$Html$Styled$node('input');
+var $rtfeldman$elm_css$Css$prop2 = F3(
+	function (key, argA, argB) {
+		return A2($rtfeldman$elm_css$Css$property, key, argA.value + (' ' + argB.value));
+	});
+var $rtfeldman$elm_css$Css$margin2 = $rtfeldman$elm_css$Css$prop2('margin');
+var $rtfeldman$elm_css$Css$marginBottom = $rtfeldman$elm_css$Css$prop1('margin-bottom');
+var $rtfeldman$elm_css$Html$Styled$Events$alwaysStop = function (x) {
+	return _Utils_Tuple2(x, true);
+};
+var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
+	return {$: 'MayStopPropagation', a: a};
+};
+var $rtfeldman$elm_css$Html$Styled$Events$stopPropagationOn = F2(
+	function (event, decoder) {
+		return A2(
+			$rtfeldman$elm_css$VirtualDom$Styled$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
+	});
+var $elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
+	});
+var $rtfeldman$elm_css$Html$Styled$Events$targetValue = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'value']),
+	$elm$json$Json$Decode$string);
+var $rtfeldman$elm_css$Html$Styled$Events$onInput = function (tagger) {
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$Events$stopPropagationOn,
+		'input',
+		A2(
+			$elm$json$Json$Decode$map,
+			$rtfeldman$elm_css$Html$Styled$Events$alwaysStop,
+			A2($elm$json$Json$Decode$map, tagger, $rtfeldman$elm_css$Html$Styled$Events$targetValue)));
+};
+var $rtfeldman$elm_css$Html$Styled$Attributes$placeholder = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('placeholder');
+var $rtfeldman$elm_css$Html$Styled$Attributes$type_ = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('type');
+var $rtfeldman$elm_css$Html$Styled$Attributes$value = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('value');
+var $author$project$Docs$viewFilterInput = function (model) {
+	return A4(
+		$rtfeldman$elm_css$Html$Styled$styled,
+		$rtfeldman$elm_css$Html$Styled$input,
+		_List_fromArray(
+			[
+				A2(
+				$rtfeldman$elm_css$Css$margin2,
+				$rtfeldman$elm_css$Css$px(12),
+				$rtfeldman$elm_css$Css$px(8)),
+				$rtfeldman$elm_css$Css$padding(
+				$rtfeldman$elm_css$Css$px(15)),
+				$rtfeldman$elm_css$Css$fontSize(
+				$rtfeldman$elm_css$Css$px(20)),
+				$rtfeldman$elm_css$Css$marginBottom(
+				$rtfeldman$elm_css$Css$px(30)),
+				$rtfeldman$elm_css$Css$backgroundColor(
+				$rtfeldman$elm_css$Css$hex('#ff6c007a')),
+				$rtfeldman$elm_css$Css$borderRadius(
+				$rtfeldman$elm_css$Css$px(5)),
+				$rtfeldman$elm_css$Css$border(
+				$rtfeldman$elm_css$Css$px(1)),
+				$rtfeldman$elm_css$Css$borderStyle($rtfeldman$elm_css$Css$solid),
+				$rtfeldman$elm_css$Css$boxShadow($rtfeldman$elm_css$Css$none),
+				$rtfeldman$elm_css$Css$width(
+				$rtfeldman$elm_css$Css$px(400))
+			]),
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Html$Styled$Attributes$type_('text'),
+				$rtfeldman$elm_css$Html$Styled$Attributes$placeholder('Search for Conversation'),
+				$rtfeldman$elm_css$Html$Styled$Attributes$value(model.docsFilterText),
+				$rtfeldman$elm_css$Html$Styled$Events$onInput($author$project$Types$UpdateDocsFilterText)
+			]),
+		_List_Nil);
+};
+var $rtfeldman$elm_css$Css$wrap = {flexDirectionOrWrap: $rtfeldman$elm_css$Css$Structure$Compatible, flexWrap: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'wrap'};
+var $author$project$Docs$view = function (model) {
+	var filteredItems = A2(
+		$elm$core$List$filter,
+		function (i) {
+			return A2($author$project$Docs$containsKeyword, i, model.docsFilterText);
+		},
+		model.suggestedQuestions);
+	return A4(
+		$rtfeldman$elm_css$Html$Styled$styled,
+		$rtfeldman$elm_css$Html$Styled$div,
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Css$margin(
+				$rtfeldman$elm_css$Css$px(0)),
+				$rtfeldman$elm_css$Css$padding(
+				$rtfeldman$elm_css$Css$px(100))
+			]),
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$rtfeldman$elm_css$Html$Styled$h1,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$text('Bookmarked Conversations')
+					])),
+				$author$project$Docs$viewFilterInput(model),
+				A4(
+				$rtfeldman$elm_css$Html$Styled$styled,
+				$rtfeldman$elm_css$Html$Styled$div,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Css$displayFlex,
+						$rtfeldman$elm_css$Css$flexWrap($rtfeldman$elm_css$Css$wrap)
+					]),
+				_List_Nil,
+				A2(
+					$elm$core$List$map,
+					function (content) {
+						return $author$project$Docs$viewDocsItem(content);
+					},
+					filteredItems)),
+				$author$project$Footer$appFooter
+			]));
+};
+var $author$project$Types$BookmarkMessage = {$: 'BookmarkMessage'};
+var $author$project$Types$DeleteMessage = {$: 'DeleteMessage'};
+var $author$project$Types$SubmitApiKey = {$: 'SubmitApiKey'};
+var $author$project$Types$SubmitMessage = {$: 'SubmitMessage'};
+var $author$project$Types$UpdateInputText = function (a) {
+	return {$: 'UpdateInputText', a: a};
+};
+var $rtfeldman$elm_css$Css$auto = {alignItemsOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, cursor: $rtfeldman$elm_css$Css$Structure$Compatible, flexBasis: $rtfeldman$elm_css$Css$Structure$Compatible, intOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, justifyContentOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAutoOrCoverOrContain: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNumberOrAutoOrNoneOrContent: $rtfeldman$elm_css$Css$Structure$Compatible, overflow: $rtfeldman$elm_css$Css$Structure$Compatible, pointerEvents: $rtfeldman$elm_css$Css$Structure$Compatible, tableLayout: $rtfeldman$elm_css$Css$Structure$Compatible, textRendering: $rtfeldman$elm_css$Css$Structure$Compatible, touchAction: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'auto'};
+var $rtfeldman$elm_css$Css$Preprocess$ExtendSelector = F2(
+	function (a, b) {
+		return {$: 'ExtendSelector', a: a, b: b};
+	});
+var $rtfeldman$elm_css$Css$Structure$PseudoClassSelector = function (a) {
+	return {$: 'PseudoClassSelector', a: a};
+};
+var $rtfeldman$elm_css$Css$pseudoClass = function (_class) {
+	return $rtfeldman$elm_css$Css$Preprocess$ExtendSelector(
+		$rtfeldman$elm_css$Css$Structure$PseudoClassSelector(_class));
+};
+var $rtfeldman$elm_css$Css$hover = $rtfeldman$elm_css$Css$pseudoClass('hover');
+var $rtfeldman$elm_css$Css$marginLeft = $rtfeldman$elm_css$Css$prop1('margin-left');
+var $rtfeldman$elm_css$Css$underline = {textDecorationLine: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'underline'};
+var $author$project$Footer$btn = A2(
+	$rtfeldman$elm_css$Html$Styled$styled,
+	$rtfeldman$elm_css$Html$Styled$button,
+	_List_fromArray(
+		[
+			$rtfeldman$elm_css$Css$color(
+			A3($rtfeldman$elm_css$Css$rgb, 0, 0, 0)),
+			$rtfeldman$elm_css$Css$hover(
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Css$color(
+					A3($rtfeldman$elm_css$Css$rgb, 255, 255, 255)),
+					$rtfeldman$elm_css$Css$textDecoration($rtfeldman$elm_css$Css$underline)
+				])),
+			$rtfeldman$elm_css$Css$width(
+			$rtfeldman$elm_css$Css$px(50)),
+			$rtfeldman$elm_css$Css$height(
+			$rtfeldman$elm_css$Css$px(50)),
+			$rtfeldman$elm_css$Css$marginLeft(
+			$rtfeldman$elm_css$Css$px(10))
+		]));
+var $rtfeldman$elm_css$Html$Styled$Attributes$class = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('className');
+var $rtfeldman$elm_css$Html$Styled$form = $rtfeldman$elm_css$Html$Styled$node('form');
+var $rtfeldman$elm_css$VirtualDom$Styled$attribute = F2(
+	function (key, value) {
+		return A3(
+			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
+			A2($elm$virtual_dom$VirtualDom$attribute, key, value),
+			false,
+			'');
+	});
+var $rtfeldman$elm_css$Html$Styled$Attributes$list = $rtfeldman$elm_css$VirtualDom$Styled$attribute('list');
+var $author$project$Home$mainStyle = _List_fromArray(
+	[
+		$rtfeldman$elm_css$Css$displayFlex,
+		$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+		$rtfeldman$elm_css$Css$margin($rtfeldman$elm_css$Css$auto)
+	]);
+var $rtfeldman$elm_css$Css$marginTop = $rtfeldman$elm_css$Css$prop1('margin-top');
+var $rtfeldman$elm_css$Css$maxWidth = $rtfeldman$elm_css$Css$prop1('max-width');
+var $rtfeldman$elm_css$Css$borderColor = function (c) {
+	return A2($rtfeldman$elm_css$Css$property, 'border-color', c.value);
+};
+var $rtfeldman$elm_css$Css$prop4 = F5(
+	function (key, argA, argB, argC, argD) {
+		return A2($rtfeldman$elm_css$Css$property, key, argA.value + (' ' + (argB.value + (' ' + (argC.value + (' ' + argD.value))))));
+	});
+var $rtfeldman$elm_css$Css$borderRadius4 = $rtfeldman$elm_css$Css$prop4('border-radius');
 var $rtfeldman$elm_css$Css$padding4 = $rtfeldman$elm_css$Css$prop4('padding');
 var $author$project$Home$viewAssistantMessage = F2(
 	function (message, isLoading) {
@@ -10190,8 +10208,21 @@ var $author$project$Home$view = function (model) {
 										$rtfeldman$elm_css$Html$Styled$input,
 										_List_fromArray(
 											[
+												$rtfeldman$elm_css$Css$padding(
+												$rtfeldman$elm_css$Css$px(12)),
 												$rtfeldman$elm_css$Css$fontSize(
 												$rtfeldman$elm_css$Css$px(20)),
+												$rtfeldman$elm_css$Css$marginBottom(
+												$rtfeldman$elm_css$Css$px(30)),
+												$rtfeldman$elm_css$Css$backgroundColor(
+												$rtfeldman$elm_css$Css$hex(
+													(model.apiKey === '') ? '#ff00007a' : '#44ff007a')),
+												$rtfeldman$elm_css$Css$borderRadius(
+												$rtfeldman$elm_css$Css$px(5)),
+												$rtfeldman$elm_css$Css$border(
+												$rtfeldman$elm_css$Css$px(1)),
+												$rtfeldman$elm_css$Css$borderStyle($rtfeldman$elm_css$Css$solid),
+												$rtfeldman$elm_css$Css$boxShadow($rtfeldman$elm_css$Css$none),
 												$rtfeldman$elm_css$Css$width(
 												$rtfeldman$elm_css$Css$px(400))
 											]),
