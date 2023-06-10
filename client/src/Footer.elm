@@ -1,7 +1,7 @@
 module Footer exposing (..)
 
 
-
+import Html.Events exposing (onClick)
 import Css exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (..)
@@ -28,7 +28,7 @@ btn =
         ]
 
 appFooter : Html Msg
-appFooter = styled div [position fixed, left (px 0), bottom (px 0)
+appFooter = styled div [position fixed, left (px 0), bottom (px 0), backgroundColor (rgb 255 255 255)
                      , Css.width (pct 100), Css.height (px 60)
                      --, backgroundColor (rgb 200 200 200)
                      , paddingTop (px 10), paddingBottom (px 7)

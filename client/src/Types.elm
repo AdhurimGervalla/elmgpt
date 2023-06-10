@@ -22,6 +22,7 @@ type Msg
     | DeleteMessage
     | GetOneFromPocketbase String
     | GotResponseFromOnePocketbase (Result Http.Error ApiResponsePocketbase)
+    | Loading Bool
 
 type alias ChatCompletion = {
     model: String,
@@ -47,6 +48,7 @@ type alias Model =
     , suggestedQuestions : List ApiResponsePocketbase
     , detailPage : ApiResponsePocketbase
     , page : Page
+    , isLoading : Bool
     }
 
 type alias Choice =

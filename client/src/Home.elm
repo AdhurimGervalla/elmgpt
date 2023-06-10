@@ -13,12 +13,12 @@ import Decoders exposing (..)
 import Encoders exposing (..)
 
 view : Model ->  Html Msg
-view model = styled div [margin (px 0)] []
+view model = styled div [margin (px 0), paddingBottom (px 100)] []
   [ 
     styled div [marginTop (px 100)] [] [
       styled Html.Styled.form [ displayFlex, justifyContent center] [] [
         styled div mainStyle [] [
-          styled input [Css.width (px 400)] [
+          styled input [fontSize (px 20), Css.width (px 400)] [
                   type_ "text"
                 , list "aiSearch"
                 , placeholder "Ask the AI"
@@ -27,7 +27,7 @@ view model = styled div [margin (px 0)] []
           ,btn [onClick SubmitMessage, type_ "button"] [text "GO!" ]
         ]
     ], viewSuggestedQuestions model
-  , styled div [marginRight (px 100), marginLeft (px 100), marginTop (px 60), maxWidth (px 800)] [] [
+     , styled div [marginRight (auto), marginLeft (auto), marginTop (px 60), maxWidth (px 800)] [] [
         h1 [] [ if (length model.choices) > 0 then text "AI Chat" else text ""], 
         div [] 
         (if (length model.choices) > 0 
@@ -38,22 +38,19 @@ view model = styled div [margin (px 0)] []
             else 
                 [ text "" ]
         ),
-        ul [] (List.map viewMessage model.choices)
+        div [] (List.map (\choice -> viewMessage choice model.isLoading) model.choices)
   ]
   , appFooter
   ]]
 
 getSuggestedQuestionsCmd : Cmd Msg
 getSuggestedQuestionsCmd =
-    let
-        uri = "http://127.0.0.1:8090/api/collections/docs/records"
-        _ = Debug.log "uri is: " uri
-    in
-        Http.get
+    Http.get
         {
-            url = uri,
+            url = "http://127.0.0.1:8090/api/collections/docs/records",
             expect = Http.expectJson ReceiveSuggestedQuestions decodeApiResponseFromPocketbaseList
         }
+
 
 mainStyle : List (Style)
 mainStyle = [ 
@@ -72,10 +69,38 @@ viewSuggestedQuestions model =
     in
         div [] [if model.inputText /= "" then datalist [id "aiSearch"] (List.map (\content -> option [] [text content]) allContent) else text ""]
 
-viewMessage : Choice -> Html Msg
-viewMessage choice =
-    li [] [ text choice.message.content ]
+viewMessage : Choice -> Bool -> Html Msg
+viewMessage choice isLoading = 
+    if choice.message.role == Assistant 
+        then viewAssistantMessage choice.message isLoading 
+        else viewUserMessage choice.message
 
+viewUserMessage : Message -> Html Msg
+viewUserMessage message =
+    styled div [
+            fontSize (px 20),
+            backgroundColor (hex "#ffa"), 
+            borderRadius4 (px 5) (px 5) (px 0) (px 0), 
+            border (px 1), borderColor (hex "#ededed"), 
+            padding4 (px 10) (px 10) (px 7) (px 8), 
+            marginTop (px 20), fontWeight bold
+        ] 
+        [] 
+        [text message.content]
+
+viewAssistantMessage : Message -> Bool -> Html Msg
+viewAssistantMessage message isLoading =
+    styled div [
+        fontSize (px 20),
+        backgroundColor (hex "#b2f5b2"), 
+        borderRadius4 (px 0) (px 0) (px 5) (px 5), 
+        border (px 1), borderColor (hex "#ededed"), 
+        padding4 (px 10) (px 10) (px 7) (px 8)
+    ]
+    []
+    [
+        if isLoading then text "Loading..." else text message.content
+    ]
 
 chatMessages : String -> Model -> ChatCompletion
 chatMessages question model = ChatCompletion "gpt-3.5-turbo" ((List.map (\c -> c.message) model.choices) ++ [(Message User question)]) 0.7

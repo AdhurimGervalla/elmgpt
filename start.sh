@@ -6,5 +6,5 @@ if [ ! -f server/pocketbase ]; then
 fi
 
 cd server && ./pocketbase serve &
-cd client && elm reactor
+cd client && elm-live src/Main.elm --pushstate
 # cd client && elm make src/Main.elm --output=main.js && http-server .

@@ -10,6 +10,7 @@ import Home
 import Docs
 import UriParser as Parser
 import Url.Parser as Parser exposing ((</>), Parser)
+import Footer exposing (appFooter)
 
 main : Program () Model Msg
 main =
@@ -32,6 +33,7 @@ init flags url key =
       , suggestedQuestions = []
       , page = HomePage
       , detailPage =  { id = "", collectionId = "", collectionName = "", created = "", updated = "", messages = [], scraped = False }
+      , isLoading = False
       }
     , getSuggestedQuestionsCmd
     )
@@ -59,6 +61,9 @@ viewPage page model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        Loading isLoading ->
+            ( {model | isLoading = isLoading}, Cmd.none )
+
         GetOneFromPocketbase slug ->
             let
                 cmd = Docs.getOne slug
@@ -105,16 +110,11 @@ update msg model =
         GotResponse result ->
             case result of
                 Ok apiResponse ->
-                    let
-                        _ = Debug.log "API Response Chat GPT" apiResponse
-                    in
-                    ( {model | choices = model.choices ++ List.map (\i -> i) apiResponse.choices}, Cmd.none )
+                    ( {model | choices = model.choices ++ List.map (\i -> i) apiResponse.choices, isLoading = False}, Cmd.none )
 
                 Err httpError ->
-                    let
-                        _ = Debug.log "HTTP Error" httpError
-                    in
                     ( model, Cmd.none )
+
 
         GotResponseFromPocketbase result ->
             case result of
@@ -139,29 +139,20 @@ update msg model =
         ReceiveSuggestedQuestions result ->
             case result of
                 Ok suggestedQuestions ->
-                    let
-                        _ = Debug.log "Suggested Questions" suggestedQuestions.items
-                    in
                     ( {model | suggestedQuestions = suggestedQuestions.items}, Cmd.none )
-
                 Err httpError ->
-                    let
-                        _ = Debug.log "HTTP Error" httpError
-                    in
                     ( model, Cmd.none )
 
         SubmitMessage ->
             let
                 userMessage = { message = { role = User, content = model.inputText }, finish_reason = "", index = 0 }
                 cmd = chatWithAi model.inputText model
-                _ = Debug.log "Input Message" model.inputText
             in
-            ( { model | choices = model.choices ++ [userMessage], inputText = "" }, cmd )
+            ( { model | choices = model.choices ++ [userMessage], inputText = "", isLoading = True }, cmd )
         BookmarkMessage ->
             let
                 data = { messages = (List.map (\c -> c.message) model.choices), scraped = False }
                 cmd = bookmarkChat data
-                _ = Debug.log "data to save in pocketbase" model.choices
             in
             ( model, cmd)
         DeleteMessage ->( {model | choices = [], inputText = ""}, Cmd.none )

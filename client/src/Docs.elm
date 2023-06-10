@@ -10,13 +10,14 @@ import Css exposing (..)
 import Http exposing (Error)
 import Decoders exposing (..)
 import Encoders exposing (..)
+import Home exposing (viewAssistantMessage, viewUserMessage)
 
 view : Model -> Html Msg
 view model =
     let
         filteredItems = filter (\i -> containsKeyword i model.docsFilterText) model.suggestedQuestions
     in
-      styled div [margin (px 0)] []
+      styled div [margin (px 0), padding (px 100)] []
           [
           viewFilterInput model,
           styled div [displayFlex, flexWrap wrap] [] (List.map (\content -> viewDocsItem content) filteredItems),
@@ -28,9 +29,9 @@ containsKeyword item query = foldl (||) False (List.map (\i -> contains (toUpper
 
 viewDocsItem : ApiResponsePocketbase -> Html Msg
 viewDocsItem item =
-          styled a [flex3 (int 1) (int 1) (px 100), textDecoration none] [href ("docs/issue-id/" ++ item.id), onClick (GetOneFromPocketbase item.id)]
+          styled a [fontSize (px 20), flex3 (int 1) (int 1) (px 100), textDecoration none] [href ("docs/issue-id/" ++ item.id), onClick (GetOneFromPocketbase item.id)]
            [
-            styled div [margin (px 8), padding (px 8), minWidth (px 300),boxShadow5 (px 1) (px 1) (px 4) (px 4) (rgba 150 150 150 0.2), border3 (px 1) solid (rgb 200 200 200)] [] [
+            styled div [fontSize (px 20), margin (px 8), padding (px 8), minWidth (px 300),boxShadow5 (px 1) (px 1) (px 4) (px 4) (rgba 150 150 150 0.2), border3 (px 1) solid (rgb 200 200 200)] [] [
                  styled div [displayFlex, flexDirection column, color (rgb 0 0 0)] [] (List.map(\message -> span [] [text message.content]) item.messages),
                   text "more"
               ]
@@ -46,10 +47,10 @@ viewFilterInput model = styled input [margin2 (px 12) (px 8), Css.width (px 400)
 
 viewDetail : String -> Model ->  Html Msg
 viewDetail slug model = 
-    styled div [margin (px 0)] []
+    styled div [margin (px 0), padding (px 100)] []
   [ 
     
-  styled div [ marginLeft (px 100), marginRight auto, marginTop (px 100), maxWidth (px 800)] [] [
+  styled div [ marginLeft auto, marginRight auto, marginTop (px 100), maxWidth (px 800)] [] [
       
         ul [] (List.map viewMessage model.detailPage.messages)
   ]
@@ -58,7 +59,7 @@ viewDetail slug model =
 
 viewMessage : Message -> Html Msg
 viewMessage message =
-    div [] [styled li [if message.role == User then fontWeight bold else fontWeight normal] [] [ text message.content ],
+    div [] [styled div [] [] [ if message.role == User then viewUserMessage message else viewAssistantMessage message False],
             p [] []]
 
 getOne : String -> Cmd Msg
