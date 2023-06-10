@@ -31,6 +31,7 @@ init flags url key =
       , page = HomePage
       , detailPage =  { id = "", collectionId = "", collectionName = "", created = "", updated = "", messages = [], scraped = False }
       , isLoading = False
+      , apiKey = ""
       }
     , getSuggestedQuestionsCmd
     )
@@ -140,12 +141,16 @@ update msg model =
                 Err httpError ->
                     ( model, Cmd.none )
 
+        SubmitApiKey ->
+            ({ model | apiKey = model.inputText, inputText = "", isLoading = False }, Cmd.none)
+
         SubmitMessage ->
             let
                 userMessage = { message = { role = User, content = model.inputText }, finish_reason = "", index = 0 }
-                cmd = chatWithAi model.inputText model
+                cmd = chatWithAi model.inputText model                        
             in
             ( { model | choices = model.choices ++ [userMessage], inputText = "", isLoading = True }, cmd )
+
         BookmarkMessage ->
             let
                 data = { messages = (List.map (\c -> c.message) model.choices), scraped = False }

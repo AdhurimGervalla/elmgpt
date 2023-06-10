@@ -18,6 +18,7 @@ type Msg
     | UpdateDocsFilterText String
     | ReceiveSuggestedQuestions (Result Http.Error ApiResponsePocketbaseList)
     | SubmitMessage
+    | SubmitApiKey
     | BookmarkMessage
     | DeleteMessage
     | GetOneFromPocketbase String
@@ -49,6 +50,7 @@ type alias Model =
     , detailPage : ApiResponsePocketbase
     , page : Page
     , isLoading : Bool
+    , apiKey : String
     }
 
 type alias Choice =

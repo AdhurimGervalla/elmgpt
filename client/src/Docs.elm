@@ -19,6 +19,7 @@ view model =
     in
       styled div [margin (px 0), padding (px 100)] []
           [
+          h1 [] [text "Bookmarked Conversations"],
           viewFilterInput model,
           styled div [displayFlex, flexWrap wrap] [] (List.map (\content -> viewDocsItem content) filteredItems),
           appFooter
@@ -29,9 +30,9 @@ containsKeyword item query = foldl (||) False (List.map (\i -> contains (toUpper
 
 viewDocsItem : ApiResponsePocketbase -> Html Msg
 viewDocsItem item =
-          styled a [fontSize (px 20), flex3 (int 1) (int 1) (px 100), textDecoration none] [href ("docs/issue-id/" ++ item.id), onClick (GetOneFromPocketbase item.id)]
+          styled a [fontSize (px 20), textDecoration none] [href ("docs/issue-id/" ++ item.id), onClick (GetOneFromPocketbase item.id)]
            [
-            styled div [fontSize (px 20), margin (px 8), padding (px 8), minWidth (px 300),boxShadow5 (px 1) (px 1) (px 4) (px 4) (rgba 150 150 150 0.2), border3 (px 1) solid (rgb 200 200 200)] [] [
+            styled div [fontSize (px 20), margin (px 8), padding (px 15), minWidth (px 300),boxShadow5 (px 1) (px 1) (px 4) (px 4) (rgba 150 150 150 0.2), border3 (px 1) solid (rgb 200 200 200)] [] [
                  styled div [displayFlex, flexDirection column, color (rgb 0 0 0)] [] (List.map(\message -> span [] [text message.content]) item.messages),
                   text "more"
               ]

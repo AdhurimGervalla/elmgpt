@@ -21,10 +21,10 @@ view model = styled div [margin (px 0), paddingBottom (px 100)] []
           styled input [fontSize (px 20), Css.width (px 400)] [
                   type_ "text"
                 , list "aiSearch"
-                , placeholder "Ask the AI"
+                , placeholder (if model.apiKey == "" then "Enter API Key" else "Ask the AI")
                 , value model.inputText
                 , onInput UpdateInputText] []
-          ,btn [onClick SubmitMessage, type_ "button"] [text "GO!" ]
+          ,btn [onClick (if model.apiKey == "" then SubmitApiKey else SubmitMessage), type_ "button"] [text "GO!" ]
         ]
     ], viewSuggestedQuestions model
      , styled div [marginRight (auto), marginLeft (auto), marginTop (px 60), maxWidth (px 800)] [] [
@@ -115,7 +115,7 @@ chatWithAi input model =
     Http.request
     {
         method = "POST",
-        headers = [Http.header "Authorization" ("Bearer " ++ apiKey)],
+        headers = [Http.header "Authorization" ("Bearer " ++ model.apiKey)],
         url = url,
         body = Http.jsonBody requestBody,
         expect = Http.expectJson GotResponse decodeApiResponse,
@@ -140,10 +140,6 @@ bookmarkChat conversation =
             timeout = Nothing,
             tracker = Nothing
         }
-
-apiKey : String
-apiKey =
-    ""
 
 url : String
 url =

@@ -5378,24 +5378,13 @@ var $elm$core$Task$perform = F2(
 	});
 var $elm$browser$Browser$application = _Browser_application;
 var $author$project$Types$HomePage = {$: 'HomePage'};
-var $elm$core$Platform$Cmd$batch = _Platform_batch;
-var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $author$project$Main$init = F3(
-	function (flags, url, key) {
-		return _Utils_Tuple2(
-			{choices: _List_Nil, inputText: '', key: key, page: $author$project$Types$HomePage, suggestedQuestions: _List_Nil, url: url},
-			$elm$core$Platform$Cmd$none);
+var $author$project$Types$ReceiveSuggestedQuestions = function (a) {
+	return {$: 'ReceiveSuggestedQuestions', a: a};
+};
+var $author$project$Types$ApiResponsePocketbaseList = F5(
+	function (page, perPage, totalPages, totalItems, items) {
+		return {items: items, page: page, perPage: perPage, totalItems: totalItems, totalPages: totalPages};
 	});
-var $elm$core$Platform$Sub$batch = _Platform_batch;
-var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
-var $author$project$Main$subscriptions = function (_v0) {
-	return $elm$core$Platform$Sub$none;
-};
-var $author$project$Types$DocsPage = {$: 'DocsPage'};
-var $author$project$Types$User = {$: 'User'};
-var $author$project$Types$GotResponseFromPocketbase = function (a) {
-	return {$: 'GotResponseFromPocketbase', a: a};
-};
 var $author$project$Types$ApiResponsePocketbase = F7(
 	function (id, collectionId, collectionName, created, updated, messages, scraped) {
 		return {collectionId: collectionId, collectionName: collectionName, created: created, id: id, messages: messages, scraped: scraped, updated: updated};
@@ -5408,6 +5397,7 @@ var $author$project$Types$Message = F2(
 var $elm$json$Json$Decode$andThen = _Json_andThen;
 var $author$project$Types$Assistant = {$: 'Assistant'};
 var $author$project$Types$System = {$: 'System'};
+var $author$project$Types$User = {$: 'User'};
 var $elm$json$Json$Decode$fail = _Json_fail;
 var $author$project$Decoders$roleDecoder = function (str) {
 	switch (str) {
@@ -5444,64 +5434,19 @@ var $author$project$Decoders$decodeApiResponsePocketbase = A8(
 		'messages',
 		$elm$json$Json$Decode$list($author$project$Decoders$decodeMessage)),
 	A2($elm$json$Json$Decode$field, 'scraped', $elm$json$Json$Decode$bool));
-var $elm$json$Json$Encode$bool = _Json_wrap;
-var $elm$json$Json$Encode$string = _Json_wrap;
-var $author$project$Encoders$encodeRole = function (role) {
-	switch (role.$) {
-		case 'System':
-			return $elm$json$Json$Encode$string('system');
-		case 'User':
-			return $elm$json$Json$Encode$string('user');
-		default:
-			return $elm$json$Json$Encode$string('assistant');
-	}
-};
-var $elm$json$Json$Encode$object = function (pairs) {
-	return _Json_wrap(
-		A3(
-			$elm$core$List$foldl,
-			F2(
-				function (_v0, obj) {
-					var k = _v0.a;
-					var v = _v0.b;
-					return A3(_Json_addField, k, v, obj);
-				}),
-			_Json_emptyObject(_Utils_Tuple0),
-			pairs));
-};
-var $author$project$Encoders$encodeMessage = function (sm) {
-	return $elm$json$Json$Encode$object(
-		_List_fromArray(
-			[
-				_Utils_Tuple2(
-				'role',
-				$author$project$Encoders$encodeRole(sm.role)),
-				_Utils_Tuple2(
-				'content',
-				$elm$json$Json$Encode$string(sm.content))
-			]));
-};
-var $elm$json$Json$Encode$list = F2(
-	function (func, entries) {
-		return _Json_wrap(
-			A3(
-				$elm$core$List$foldl,
-				_Json_addEntry(func),
-				_Json_emptyArray(_Utils_Tuple0),
-				entries));
-	});
-var $author$project$Encoders$encodeConversation = function (conversation) {
-	return $elm$json$Json$Encode$object(
-		_List_fromArray(
-			[
-				_Utils_Tuple2(
-				'messages',
-				A2($elm$json$Json$Encode$list, $author$project$Encoders$encodeMessage, conversation.messages)),
-				_Utils_Tuple2(
-				'scraped',
-				$elm$json$Json$Encode$bool(conversation.scraped))
-			]));
-};
+var $elm$json$Json$Decode$int = _Json_decodeInt;
+var $elm$json$Json$Decode$map5 = _Json_map5;
+var $author$project$Decoders$decodeApiResponseFromPocketbaseList = A6(
+	$elm$json$Json$Decode$map5,
+	$author$project$Types$ApiResponsePocketbaseList,
+	A2($elm$json$Json$Decode$field, 'page', $elm$json$Json$Decode$int),
+	A2($elm$json$Json$Decode$field, 'perPage', $elm$json$Json$Decode$int),
+	A2($elm$json$Json$Decode$field, 'totalPages', $elm$json$Json$Decode$int),
+	A2($elm$json$Json$Decode$field, 'totalItems', $elm$json$Json$Decode$int),
+	A2(
+		$elm$json$Json$Decode$field,
+		'items',
+		$elm$json$Json$Decode$list($author$project$Decoders$decodeApiResponsePocketbase)));
 var $elm$json$Json$Decode$decodeString = _Json_runOnString;
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
@@ -6116,13 +6061,7 @@ var $elm$http$Http$expectJson = F2(
 						A2($elm$json$Json$Decode$decodeString, decoder, string));
 				}));
 	});
-var $elm$http$Http$jsonBody = function (value) {
-	return A2(
-		_Http_pair,
-		'application/json',
-		A2($elm$json$Json$Encode$encode, 0, value));
-};
-var $elm$core$Debug$log = _Debug_log;
+var $elm$http$Http$emptyBody = _Http_emptyBody;
 var $elm$http$Http$Request = function (a) {
 	return {$: 'Request', a: a};
 };
@@ -6291,6 +6230,108 @@ var $elm$http$Http$request = function (r) {
 		$elm$http$Http$Request(
 			{allowCookiesFromOtherDomains: false, body: r.body, expect: r.expect, headers: r.headers, method: r.method, timeout: r.timeout, tracker: r.tracker, url: r.url}));
 };
+var $elm$http$Http$get = function (r) {
+	return $elm$http$Http$request(
+		{body: $elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
+};
+var $author$project$Home$getSuggestedQuestionsCmd = $elm$http$Http$get(
+	{
+		expect: A2($elm$http$Http$expectJson, $author$project$Types$ReceiveSuggestedQuestions, $author$project$Decoders$decodeApiResponseFromPocketbaseList),
+		url: 'http://127.0.0.1:8090/api/collections/docs/records'
+	});
+var $author$project$Main$init = F3(
+	function (flags, url, key) {
+		return _Utils_Tuple2(
+			{
+				choices: _List_Nil,
+				detailPage: {collectionId: '', collectionName: '', created: '', id: '', messages: _List_Nil, scraped: false, updated: ''},
+				docsFilterText: '',
+				inputText: '',
+				isLoading: false,
+				key: key,
+				page: $author$project$Types$HomePage,
+				suggestedQuestions: _List_Nil,
+				url: url
+			},
+			$author$project$Home$getSuggestedQuestionsCmd);
+	});
+var $elm$core$Platform$Sub$batch = _Platform_batch;
+var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
+var $author$project$Main$subscriptions = function (_v0) {
+	return $elm$core$Platform$Sub$none;
+};
+var $author$project$Types$DocsDetailPage = function (a) {
+	return {$: 'DocsDetailPage', a: a};
+};
+var $author$project$Types$DocsPage = {$: 'DocsPage'};
+var $author$project$Types$GotResponseFromPocketbase = function (a) {
+	return {$: 'GotResponseFromPocketbase', a: a};
+};
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $author$project$Encoders$encodeRole = function (role) {
+	switch (role.$) {
+		case 'System':
+			return $elm$json$Json$Encode$string('system');
+		case 'User':
+			return $elm$json$Json$Encode$string('user');
+		default:
+			return $elm$json$Json$Encode$string('assistant');
+	}
+};
+var $elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			$elm$core$List$foldl,
+			F2(
+				function (_v0, obj) {
+					var k = _v0.a;
+					var v = _v0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(_Utils_Tuple0),
+			pairs));
+};
+var $author$project$Encoders$encodeMessage = function (sm) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'role',
+				$author$project$Encoders$encodeRole(sm.role)),
+				_Utils_Tuple2(
+				'content',
+				$elm$json$Json$Encode$string(sm.content))
+			]));
+};
+var $elm$json$Json$Encode$list = F2(
+	function (func, entries) {
+		return _Json_wrap(
+			A3(
+				$elm$core$List$foldl,
+				_Json_addEntry(func),
+				_Json_emptyArray(_Utils_Tuple0),
+				entries));
+	});
+var $author$project$Encoders$encodeConversation = function (conversation) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'messages',
+				A2($elm$json$Json$Encode$list, $author$project$Encoders$encodeMessage, conversation.messages)),
+				_Utils_Tuple2(
+				'scraped',
+				$elm$json$Json$Encode$bool(conversation.scraped))
+			]));
+};
+var $elm$http$Http$jsonBody = function (value) {
+	return A2(
+		_Http_pair,
+		'application/json',
+		A2($elm$json$Json$Encode$encode, 0, value));
+};
+var $elm$core$Debug$log = _Debug_log;
 var $author$project$Home$bookmarkChat = function (conversation) {
 	var requestBody = $author$project$Encoders$encodeConversation(conversation);
 	var requestBodyJsonString = A2($elm$json$Json$Encode$encode, 2, requestBody);
@@ -6309,7 +6350,7 @@ var $author$project$Home$bookmarkChat = function (conversation) {
 var $author$project$Types$GotResponse = function (a) {
 	return {$: 'GotResponse', a: a};
 };
-var $author$project$Home$apiKey = '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';
+var $author$project$Home$apiKey = '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';
 var $author$project$Types$ChatCompletion = F3(
 	function (model, messages, temperature) {
 		return {messages: messages, model: model, temperature: temperature};
@@ -6339,7 +6380,6 @@ var $author$project$Types$Choice = F3(
 	function (message, finish_reason, index) {
 		return {finish_reason: finish_reason, index: index, message: message};
 	});
-var $elm$json$Json$Decode$int = _Json_decodeInt;
 var $elm$json$Json$Decode$map3 = _Json_map3;
 var $author$project$Decoders$decodeChoice = A4(
 	$elm$json$Json$Decode$map3,
@@ -6396,40 +6436,20 @@ var $author$project$Home$chatWithAi = F2(
 				url: $author$project$Home$url
 			});
 	});
-var $author$project$Types$ReceiveSuggestedQuestions = function (a) {
-	return {$: 'ReceiveSuggestedQuestions', a: a};
+var $author$project$Types$GotResponseFromOnePocketbase = function (a) {
+	return {$: 'GotResponseFromOnePocketbase', a: a};
 };
-var $author$project$Types$ApiResponsePocketbaseList = F5(
-	function (page, perPage, totalPages, totalItems, items) {
-		return {items: items, page: page, perPage: perPage, totalItems: totalItems, totalPages: totalPages};
-	});
-var $elm$json$Json$Decode$map5 = _Json_map5;
-var $author$project$Decoders$decodeApiResponseFromPocketbaseList = A6(
-	$elm$json$Json$Decode$map5,
-	$author$project$Types$ApiResponsePocketbaseList,
-	A2($elm$json$Json$Decode$field, 'page', $elm$json$Json$Decode$int),
-	A2($elm$json$Json$Decode$field, 'perPage', $elm$json$Json$Decode$int),
-	A2($elm$json$Json$Decode$field, 'totalPages', $elm$json$Json$Decode$int),
-	A2($elm$json$Json$Decode$field, 'totalItems', $elm$json$Json$Decode$int),
-	A2(
-		$elm$json$Json$Decode$field,
-		'items',
-		$elm$json$Json$Decode$list($author$project$Decoders$decodeApiResponsePocketbase)));
-var $elm$http$Http$emptyBody = _Http_emptyBody;
-var $elm$http$Http$get = function (r) {
-	return $elm$http$Http$request(
-		{body: $elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
-};
-var $author$project$Home$getSuggestedQuestionsCmd = function (input) {
-	var uri = 'http://127.0.0.1:8090/api/collections/docs/records';
-	var _v0 = A2($elm$core$Debug$log, 'uri is: ', uri);
+var $author$project$Docs$getOne = function (id) {
+	var uri = 'http://127.0.0.1:8090/api/collections/docs/records/' + id;
 	return $elm$http$Http$get(
 		{
-			expect: A2($elm$http$Http$expectJson, $author$project$Types$ReceiveSuggestedQuestions, $author$project$Decoders$decodeApiResponseFromPocketbaseList),
+			expect: A2($elm$http$Http$expectJson, $author$project$Types$GotResponseFromOnePocketbase, $author$project$Decoders$decodeApiResponsePocketbase),
 			url: uri
 		});
 };
 var $elm$browser$Browser$Navigation$load = _Browser_load;
+var $elm$core$Platform$Cmd$batch = _Platform_batch;
+var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
 var $elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
@@ -6478,16 +6498,42 @@ var $elm$url$Url$toString = function (url) {
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
+			case 'Loading':
+				var isLoading = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{isLoading: isLoading}),
+					$elm$core$Platform$Cmd$none);
+			case 'GetOneFromPocketbase':
+				var slug = msg.a;
+				var cmd = $author$project$Docs$getOne(slug);
+				return _Utils_Tuple2(model, cmd);
+			case 'GotResponseFromOnePocketbase':
+				var result = msg.a;
+				if (result.$ === 'Ok') {
+					var apiResponse = result.a;
+					var _v2 = A2($elm$core$Debug$log, 'Detail APi Call', apiResponse);
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{detailPage: apiResponse}),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					var httpError = result.a;
+					var _v3 = A2($elm$core$Debug$log, 'HTTP Error', httpError);
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
 			case 'LinkClicked':
 				var urlRequest = msg.a;
 				if (urlRequest.$ === 'Internal') {
-					var uerel = urlRequest.a;
+					var url = urlRequest.a;
 					return _Utils_Tuple2(
 						model,
 						A2(
 							$elm$browser$Browser$Navigation$pushUrl,
 							model.key,
-							$elm$url$Url$toString(uerel)));
+							$elm$url$Url$toString(url)));
 				} else {
 					var href = urlRequest.a;
 					return _Utils_Tuple2(
@@ -6496,17 +6542,40 @@ var $author$project$Main$update = F2(
 				}
 			case 'UrlChanged':
 				var url = msg.a;
-				var page = (url.path === '/docs') ? $author$project$Types$DocsPage : $author$project$Types$HomePage;
+				var newPage = function () {
+					var _v5 = A2($elm$core$String$split, '/', url.path);
+					_v5$2:
+					while (true) {
+						if (((_v5.b && (_v5.a === '')) && _v5.b.b) && (_v5.b.a === 'docs')) {
+							if (_v5.b.b.b) {
+								if (((_v5.b.b.a === 'issue-id') && _v5.b.b.b.b) && (!_v5.b.b.b.b.b)) {
+									var _v6 = _v5.b;
+									var _v7 = _v6.b;
+									var _v8 = _v7.b;
+									var id = _v8.a;
+									return $author$project$Types$DocsDetailPage(id);
+								} else {
+									break _v5$2;
+								}
+							} else {
+								var _v9 = _v5.b;
+								return $author$project$Types$DocsPage;
+							}
+						} else {
+							break _v5$2;
+						}
+					}
+					return $author$project$Types$HomePage;
+				}();
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{page: page, url: url}),
+						{page: newPage, url: url}),
 					$elm$core$Platform$Cmd$none);
 			case 'GotResponse':
 				var result = msg.a;
 				if (result.$ === 'Ok') {
 					var apiResponse = result.a;
-					var _v3 = A2($elm$core$Debug$log, 'API Response Chat GPT', apiResponse);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -6518,19 +6587,19 @@ var $author$project$Main$update = F2(
 										function (i) {
 											return i;
 										},
-										apiResponse.choices))
+										apiResponse.choices)),
+								isLoading: false
 							}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					var httpError = result.a;
-					var _v4 = A2($elm$core$Debug$log, 'HTTP Error', httpError);
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 			case 'GotResponseFromPocketbase':
 				var result = msg.a;
 				if (result.$ === 'Ok') {
 					var apiResponse = result.a;
-					var _v6 = A2($elm$core$Debug$log, 'API Response Pocketbase', apiResponse);
+					var _v12 = A2($elm$core$Debug$log, 'API Response Pocketbase', apiResponse);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -6538,7 +6607,7 @@ var $author$project$Main$update = F2(
 						$elm$core$Platform$Cmd$none);
 				} else {
 					var httpError = result.a;
-					var _v7 = A2($elm$core$Debug$log, 'HTTP Error', httpError);
+					var _v13 = A2($elm$core$Debug$log, 'HTTP Error', httpError);
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 			case 'UpdateInputText':
@@ -6547,12 +6616,18 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{inputText: newText}),
-					$author$project$Home$getSuggestedQuestionsCmd(newText));
+					$author$project$Home$getSuggestedQuestionsCmd);
+			case 'UpdateDocsFilterText':
+				var newText = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{docsFilterText: newText}),
+					$elm$core$Platform$Cmd$none);
 			case 'ReceiveSuggestedQuestions':
 				var result = msg.a;
 				if (result.$ === 'Ok') {
 					var suggestedQuestions = result.a;
-					var _v9 = A2($elm$core$Debug$log, 'Suggested Questions', suggestedQuestions.items);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -6560,7 +6635,6 @@ var $author$project$Main$update = F2(
 						$elm$core$Platform$Cmd$none);
 				} else {
 					var httpError = result.a;
-					var _v10 = A2($elm$core$Debug$log, 'HTTP Error', httpError);
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 			case 'SubmitMessage':
@@ -6570,7 +6644,6 @@ var $author$project$Main$update = F2(
 					message: {content: model.inputText, role: $author$project$Types$User}
 				};
 				var cmd = A2($author$project$Home$chatWithAi, model.inputText, model);
-				var _v11 = A2($elm$core$Debug$log, 'Input Message', model.inputText);
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -6579,7 +6652,8 @@ var $author$project$Main$update = F2(
 								model.choices,
 								_List_fromArray(
 									[userMessage])),
-							inputText: ''
+							inputText: '',
+							isLoading: true
 						}),
 					cmd);
 			case 'BookmarkMessage':
@@ -6593,7 +6667,6 @@ var $author$project$Main$update = F2(
 					scraped: false
 				};
 				var cmd = $author$project$Home$bookmarkChat(data);
-				var _v12 = A2($elm$core$Debug$log, 'data to save in pocketbase', model.choices);
 				return _Utils_Tuple2(model, cmd);
 			default:
 				return _Utils_Tuple2(
@@ -6603,9 +6676,6 @@ var $author$project$Main$update = F2(
 					$elm$core$Platform$Cmd$none);
 		}
 	});
-var $rtfeldman$elm_css$VirtualDom$Styled$UnscopedStyles = function (a) {
-	return {$: 'UnscopedStyles', a: a};
-};
 var $elm$core$String$cons = _String_cons;
 var $robinheghan$murmur3$Murmur3$HashData = F4(
 	function (shift, seed, hash, charsProcessed) {
@@ -7139,30 +7209,8 @@ var $rtfeldman$elm_css$VirtualDom$Styled$styleToDeclaration = F3(
 var $rtfeldman$elm_css$VirtualDom$Styled$toDeclaration = function (dict) {
 	return A3($elm$core$Dict$foldl, $rtfeldman$elm_css$VirtualDom$Styled$styleToDeclaration, '', dict);
 };
-var $rtfeldman$elm_css$VirtualDom$Styled$toScopedDeclaration = F2(
-	function (scopingPrefix, dict) {
-		return A3(
-			$elm$core$Dict$foldl,
-			F3(
-				function (template, classname, declaration) {
-					return declaration + ('\n' + A3($elm$core$String$replace, '.' + $rtfeldman$elm_css$VirtualDom$Styled$classnameStandin, '#' + (scopingPrefix + ('.' + classname)), template));
-				}),
-			'',
-			dict);
-	});
 var $rtfeldman$elm_css$VirtualDom$Styled$toStyleNode = F2(
-	function (maybeNonce, accumulatedStyles) {
-		var cssText = function () {
-			if (accumulatedStyles.$ === 'UnscopedStyles') {
-				var allStyles = accumulatedStyles.a;
-				return $rtfeldman$elm_css$VirtualDom$Styled$toDeclaration(allStyles);
-			} else {
-				var scope = accumulatedStyles.a.a;
-				var rootStyles = accumulatedStyles.b;
-				var descendantStyles = accumulatedStyles.c;
-				return A2($rtfeldman$elm_css$VirtualDom$Styled$toScopedDeclaration, scope, rootStyles) + ('\n' + A2($rtfeldman$elm_css$VirtualDom$Styled$toScopedDeclaration, scope + ' ', descendantStyles));
-			}
-		}();
+	function (maybeNonce, styles) {
 		return A3(
 			$elm$virtual_dom$VirtualDom$node,
 			'span',
@@ -7188,7 +7236,8 @@ var $rtfeldman$elm_css$VirtualDom$Styled$toStyleNode = F2(
 						}
 					}(),
 					$elm$core$List$singleton(
-						$elm$virtual_dom$VirtualDom$text(cssText)))
+						$elm$virtual_dom$VirtualDom$text(
+							$rtfeldman$elm_css$VirtualDom$Styled$toDeclaration(styles))))
 				]));
 	});
 var $rtfeldman$elm_css$VirtualDom$Styled$unstyle = F4(
@@ -7201,10 +7250,7 @@ var $rtfeldman$elm_css$VirtualDom$Styled$unstyle = F4(
 			children);
 		var childNodes = _v0.a;
 		var styles = _v0.b;
-		var styleNode = A2(
-			$rtfeldman$elm_css$VirtualDom$Styled$toStyleNode,
-			maybeNonce,
-			$rtfeldman$elm_css$VirtualDom$Styled$UnscopedStyles(styles));
+		var styleNode = A2($rtfeldman$elm_css$VirtualDom$Styled$toStyleNode, maybeNonce, styles);
 		var unstyledProperties = A2(
 			$elm$core$List$map,
 			$rtfeldman$elm_css$VirtualDom$Styled$extractUnstyledAttribute(styles),
@@ -7264,9 +7310,9 @@ var $rtfeldman$elm_css$VirtualDom$Styled$getUnusedKey = F2(
 		}
 	});
 var $rtfeldman$elm_css$VirtualDom$Styled$toKeyedStyleNode = F3(
-	function (maybeNonce, accumulatedStyles, keyedChildNodes) {
+	function (maybeNonce, allStyles, keyedChildNodes) {
 		var styleNodeKey = A2($rtfeldman$elm_css$VirtualDom$Styled$getUnusedKey, '_', keyedChildNodes);
-		var finalNode = A2($rtfeldman$elm_css$VirtualDom$Styled$toStyleNode, maybeNonce, accumulatedStyles);
+		var finalNode = A2($rtfeldman$elm_css$VirtualDom$Styled$toStyleNode, maybeNonce, allStyles);
 		return _Utils_Tuple2(styleNodeKey, finalNode);
 	});
 var $rtfeldman$elm_css$VirtualDom$Styled$unstyleKeyed = F4(
@@ -7279,11 +7325,7 @@ var $rtfeldman$elm_css$VirtualDom$Styled$unstyleKeyed = F4(
 			keyedChildren);
 		var keyedChildNodes = _v0.a;
 		var styles = _v0.b;
-		var keyedStyleNode = A3(
-			$rtfeldman$elm_css$VirtualDom$Styled$toKeyedStyleNode,
-			maybeNonce,
-			$rtfeldman$elm_css$VirtualDom$Styled$UnscopedStyles(styles),
-			keyedChildNodes);
+		var keyedStyleNode = A3($rtfeldman$elm_css$VirtualDom$Styled$toKeyedStyleNode, maybeNonce, styles, keyedChildNodes);
 		var unstyledProperties = A2(
 			$elm$core$List$map,
 			$rtfeldman$elm_css$VirtualDom$Styled$extractUnstyledAttribute(styles),
@@ -7307,11 +7349,7 @@ var $rtfeldman$elm_css$VirtualDom$Styled$unstyleKeyedNS = F5(
 			keyedChildren);
 		var keyedChildNodes = _v0.a;
 		var styles = _v0.b;
-		var keyedStyleNode = A3(
-			$rtfeldman$elm_css$VirtualDom$Styled$toKeyedStyleNode,
-			maybeNonce,
-			$rtfeldman$elm_css$VirtualDom$Styled$UnscopedStyles(styles),
-			keyedChildNodes);
+		var keyedStyleNode = A3($rtfeldman$elm_css$VirtualDom$Styled$toKeyedStyleNode, maybeNonce, styles, keyedChildNodes);
 		var unstyledProperties = A2(
 			$elm$core$List$map,
 			$rtfeldman$elm_css$VirtualDom$Styled$extractUnstyledAttributeNS(styles),
@@ -7336,10 +7374,7 @@ var $rtfeldman$elm_css$VirtualDom$Styled$unstyleNS = F5(
 			children);
 		var childNodes = _v0.a;
 		var styles = _v0.b;
-		var styleNode = A2(
-			$rtfeldman$elm_css$VirtualDom$Styled$toStyleNode,
-			maybeNonce,
-			$rtfeldman$elm_css$VirtualDom$Styled$UnscopedStyles(styles));
+		var styleNode = A2($rtfeldman$elm_css$VirtualDom$Styled$toStyleNode, maybeNonce, styles);
 		var unstyledProperties = A2(
 			$elm$core$List$map,
 			$rtfeldman$elm_css$VirtualDom$Styled$extractUnstyledAttributeNS(styles),
@@ -7384,14 +7419,8 @@ var $rtfeldman$elm_css$VirtualDom$Styled$toUnstyled = function (vdom) {
 	}
 };
 var $rtfeldman$elm_css$Html$Styled$toUnstyled = $rtfeldman$elm_css$VirtualDom$Styled$toUnstyled;
-var $rtfeldman$elm_css$VirtualDom$Styled$Node = F3(
-	function (a, b, c) {
-		return {$: 'Node', a: a, b: b, c: c};
-	});
-var $rtfeldman$elm_css$VirtualDom$Styled$node = $rtfeldman$elm_css$VirtualDom$Styled$Node;
-var $rtfeldman$elm_css$Html$Styled$node = $rtfeldman$elm_css$VirtualDom$Styled$node;
-var $rtfeldman$elm_css$Html$Styled$div = $rtfeldman$elm_css$Html$Styled$node('div');
-var $rtfeldman$elm_css$Html$Styled$h1 = $rtfeldman$elm_css$Html$Styled$node('h1');
+var $rtfeldman$elm_css$Css$Structure$Compatible = {$: 'Compatible'};
+var $rtfeldman$elm_css$Css$absolute = {position: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'absolute'};
 var $rtfeldman$elm_css$Css$Preprocess$AppendProperty = function (a) {
 	return {$: 'AppendProperty', a: a};
 };
@@ -7403,13 +7432,58 @@ var $rtfeldman$elm_css$Css$property = F2(
 		return $rtfeldman$elm_css$Css$Preprocess$AppendProperty(
 			$rtfeldman$elm_css$Css$Structure$Property(key + (':' + value)));
 	});
+var $rtfeldman$elm_css$Css$backgroundColor = function (c) {
+	return A2($rtfeldman$elm_css$Css$property, 'background-color', c.value);
+};
 var $rtfeldman$elm_css$Css$prop1 = F2(
 	function (key, arg) {
 		return A2($rtfeldman$elm_css$Css$property, key, arg.value);
 	});
-var $rtfeldman$elm_css$Css$margin = $rtfeldman$elm_css$Css$prop1('margin');
+var $rtfeldman$elm_css$Css$bottom = $rtfeldman$elm_css$Css$prop1('bottom');
+var $rtfeldman$elm_css$Css$prop5 = F6(
+	function (key, argA, argB, argC, argD, argE) {
+		return A2($rtfeldman$elm_css$Css$property, key, argA.value + (' ' + (argB.value + (' ' + (argC.value + (' ' + (argD.value + (' ' + argE.value))))))));
+	});
+var $rtfeldman$elm_css$Css$boxShadow5 = $rtfeldman$elm_css$Css$prop5('box-shadow');
+var $rtfeldman$elm_css$Css$center = $rtfeldman$elm_css$Css$prop1('center');
+var $rtfeldman$elm_css$Css$displayFlex = A2($rtfeldman$elm_css$Css$property, 'display', 'flex');
+var $rtfeldman$elm_css$VirtualDom$Styled$Node = F3(
+	function (a, b, c) {
+		return {$: 'Node', a: a, b: b, c: c};
+	});
+var $rtfeldman$elm_css$VirtualDom$Styled$node = $rtfeldman$elm_css$VirtualDom$Styled$Node;
+var $rtfeldman$elm_css$Html$Styled$node = $rtfeldman$elm_css$VirtualDom$Styled$node;
+var $rtfeldman$elm_css$Html$Styled$div = $rtfeldman$elm_css$Html$Styled$node('div');
+var $rtfeldman$elm_css$Css$fixed = {backgroundAttachment: $rtfeldman$elm_css$Css$Structure$Compatible, position: $rtfeldman$elm_css$Css$Structure$Compatible, tableLayout: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'fixed'};
+var $rtfeldman$elm_css$Css$height = $rtfeldman$elm_css$Css$prop1('height');
+var $rtfeldman$elm_css$Html$Styled$a = $rtfeldman$elm_css$Html$Styled$node('a');
+var $rtfeldman$elm_css$Css$border = $rtfeldman$elm_css$Css$prop1('border');
+var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
+var $rtfeldman$elm_css$VirtualDom$Styled$Attribute = F3(
+	function (a, b, c) {
+		return {$: 'Attribute', a: a, b: b, c: c};
+	});
+var $rtfeldman$elm_css$VirtualDom$Styled$property = F2(
+	function (key, value) {
+		return A3(
+			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
+			A2($elm$virtual_dom$VirtualDom$property, key, value),
+			false,
+			'');
+	});
+var $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			$rtfeldman$elm_css$VirtualDom$Styled$property,
+			key,
+			$elm$json$Json$Encode$string(string));
+	});
+var $rtfeldman$elm_css$Html$Styled$Attributes$href = function (url) {
+	return A2($rtfeldman$elm_css$Html$Styled$Attributes$stringProperty, 'href', url);
+};
+var $rtfeldman$elm_css$Html$Styled$img = $rtfeldman$elm_css$Html$Styled$node('img');
+var $rtfeldman$elm_css$Css$marginRight = $rtfeldman$elm_css$Css$prop1('margin-right');
 var $rtfeldman$elm_css$Css$PxUnits = {$: 'PxUnits'};
-var $rtfeldman$elm_css$Css$Structure$Compatible = {$: 'Compatible'};
 var $elm$core$String$fromFloat = _String_fromNumber;
 var $rtfeldman$elm_css$Css$Internal$lengthConverter = F3(
 	function (units, unitLabel, numericValue) {
@@ -7426,7 +7500,6 @@ var $rtfeldman$elm_css$Css$Internal$lengthConverter = F3(
 			lengthOrNoneOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible,
 			lengthOrNumber: $rtfeldman$elm_css$Css$Structure$Compatible,
 			lengthOrNumberOrAutoOrNoneOrContent: $rtfeldman$elm_css$Css$Structure$Compatible,
-			lineHeight: $rtfeldman$elm_css$Css$Structure$Compatible,
 			numericValue: numericValue,
 			textIndent: $rtfeldman$elm_css$Css$Structure$Compatible,
 			unitLabel: unitLabel,
@@ -7437,10 +7510,36 @@ var $rtfeldman$elm_css$Css$Internal$lengthConverter = F3(
 		};
 	});
 var $rtfeldman$elm_css$Css$px = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PxUnits, 'px');
-var $rtfeldman$elm_css$VirtualDom$Styled$Attribute = F3(
-	function (a, b, c) {
-		return {$: 'Attribute', a: a, b: b, c: c};
+var $rtfeldman$elm_css$Css$cssFunction = F2(
+	function (funcName, args) {
+		return funcName + ('(' + (A2($elm$core$String$join, ',', args) + ')'));
 	});
+var $rtfeldman$elm_css$Css$rgba = F4(
+	function (r, g, b, alpha) {
+		return {
+			alpha: alpha,
+			blue: b,
+			color: $rtfeldman$elm_css$Css$Structure$Compatible,
+			green: g,
+			red: r,
+			value: A2(
+				$rtfeldman$elm_css$Css$cssFunction,
+				'rgba',
+				_Utils_ap(
+					A2(
+						$elm$core$List$map,
+						$elm$core$String$fromInt,
+						_List_fromArray(
+							[r, g, b])),
+					_List_fromArray(
+						[
+							$elm$core$String$fromFloat(alpha)
+						])))
+		};
+	});
+var $rtfeldman$elm_css$Html$Styled$Attributes$src = function (url) {
+	return A2($rtfeldman$elm_css$Html$Styled$Attributes$stringProperty, 'src', url);
+};
 var $elm$core$List$any = F2(
 	function (isOkay, list) {
 		any:
@@ -8970,163 +9069,8 @@ var $rtfeldman$elm_css$Html$Styled$styled = F4(
 				attrs),
 			children);
 	});
-var $rtfeldman$elm_css$VirtualDom$Styled$Unstyled = function (a) {
-	return {$: 'Unstyled', a: a};
-};
-var $rtfeldman$elm_css$VirtualDom$Styled$text = function (str) {
-	return $rtfeldman$elm_css$VirtualDom$Styled$Unstyled(
-		$elm$virtual_dom$VirtualDom$text(str));
-};
-var $rtfeldman$elm_css$Html$Styled$text = $rtfeldman$elm_css$VirtualDom$Styled$text;
-var $author$project$Docs$view = function (model) {
-	return A4(
-		$rtfeldman$elm_css$Html$Styled$styled,
-		$rtfeldman$elm_css$Html$Styled$div,
-		_List_fromArray(
-			[
-				$rtfeldman$elm_css$Css$margin(
-				$rtfeldman$elm_css$Css$px(0))
-			]),
-		_List_Nil,
-		_List_fromArray(
-			[
-				A2(
-				$rtfeldman$elm_css$Html$Styled$h1,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$rtfeldman$elm_css$Html$Styled$text('Your Title Here')
-					]))
-			]));
-};
-var $author$project$Types$BookmarkMessage = {$: 'BookmarkMessage'};
-var $author$project$Types$DeleteMessage = {$: 'DeleteMessage'};
-var $author$project$Types$SubmitMessage = {$: 'SubmitMessage'};
-var $author$project$Types$UpdateInputText = function (a) {
-	return {$: 'UpdateInputText', a: a};
-};
-var $rtfeldman$elm_css$Css$auto = {alignItemsOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, cursor: $rtfeldman$elm_css$Css$Structure$Compatible, flexBasis: $rtfeldman$elm_css$Css$Structure$Compatible, intOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, justifyContentOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAutoOrCoverOrContain: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNumberOrAutoOrNoneOrContent: $rtfeldman$elm_css$Css$Structure$Compatible, overflow: $rtfeldman$elm_css$Css$Structure$Compatible, pointerEvents: $rtfeldman$elm_css$Css$Structure$Compatible, tableLayout: $rtfeldman$elm_css$Css$Structure$Compatible, textRendering: $rtfeldman$elm_css$Css$Structure$Compatible, touchAction: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'auto'};
-var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
-var $rtfeldman$elm_css$Css$color = function (c) {
-	return A2($rtfeldman$elm_css$Css$property, 'color', c.value);
-};
-var $rtfeldman$elm_css$Css$height = $rtfeldman$elm_css$Css$prop1('height');
-var $rtfeldman$elm_css$Css$Preprocess$ExtendSelector = F2(
-	function (a, b) {
-		return {$: 'ExtendSelector', a: a, b: b};
-	});
-var $rtfeldman$elm_css$Css$Structure$PseudoClassSelector = function (a) {
-	return {$: 'PseudoClassSelector', a: a};
-};
-var $rtfeldman$elm_css$Css$pseudoClass = function (_class) {
-	return $rtfeldman$elm_css$Css$Preprocess$ExtendSelector(
-		$rtfeldman$elm_css$Css$Structure$PseudoClassSelector(_class));
-};
-var $rtfeldman$elm_css$Css$hover = $rtfeldman$elm_css$Css$pseudoClass('hover');
-var $rtfeldman$elm_css$Css$marginLeft = $rtfeldman$elm_css$Css$prop1('margin-left');
-var $rtfeldman$elm_css$Css$cssFunction = F2(
-	function (funcName, args) {
-		return funcName + ('(' + (A2($elm$core$String$join, ',', args) + ')'));
-	});
-var $rtfeldman$elm_css$Css$rgb = F3(
-	function (r, g, b) {
-		return {
-			alpha: 1,
-			blue: b,
-			color: $rtfeldman$elm_css$Css$Structure$Compatible,
-			green: g,
-			red: r,
-			value: A2(
-				$rtfeldman$elm_css$Css$cssFunction,
-				'rgb',
-				A2(
-					$elm$core$List$map,
-					$elm$core$String$fromInt,
-					_List_fromArray(
-						[r, g, b])))
-		};
-	});
-var $rtfeldman$elm_css$Css$textDecoration = $rtfeldman$elm_css$Css$prop1('text-decoration');
-var $rtfeldman$elm_css$Css$underline = {textDecorationLine: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'underline'};
 var $rtfeldman$elm_css$Css$width = $rtfeldman$elm_css$Css$prop1('width');
-var $author$project$Home$btn = A2(
-	$rtfeldman$elm_css$Html$Styled$styled,
-	$rtfeldman$elm_css$Html$Styled$button,
-	_List_fromArray(
-		[
-			$rtfeldman$elm_css$Css$color(
-			A3($rtfeldman$elm_css$Css$rgb, 0, 0, 0)),
-			$rtfeldman$elm_css$Css$hover(
-			_List_fromArray(
-				[
-					$rtfeldman$elm_css$Css$color(
-					A3($rtfeldman$elm_css$Css$rgb, 255, 255, 255)),
-					$rtfeldman$elm_css$Css$textDecoration($rtfeldman$elm_css$Css$underline)
-				])),
-			$rtfeldman$elm_css$Css$width(
-			$rtfeldman$elm_css$Css$px(50)),
-			$rtfeldman$elm_css$Css$height(
-			$rtfeldman$elm_css$Css$px(50)),
-			$rtfeldman$elm_css$Css$marginLeft(
-			$rtfeldman$elm_css$Css$px(10))
-		]));
-var $rtfeldman$elm_css$Css$center = $rtfeldman$elm_css$Css$prop1('center');
-var $rtfeldman$elm_css$Css$displayFlex = A2($rtfeldman$elm_css$Css$property, 'display', 'flex');
-var $rtfeldman$elm_css$Css$absolute = {position: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'absolute'};
-var $rtfeldman$elm_css$Css$backgroundColor = function (c) {
-	return A2($rtfeldman$elm_css$Css$property, 'background-color', c.value);
-};
-var $rtfeldman$elm_css$Css$bottom = $rtfeldman$elm_css$Css$prop1('bottom');
-var $rtfeldman$elm_css$Css$fixed = {backgroundAttachment: $rtfeldman$elm_css$Css$Structure$Compatible, position: $rtfeldman$elm_css$Css$Structure$Compatible, tableLayout: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'fixed'};
-var $rtfeldman$elm_css$Html$Styled$a = $rtfeldman$elm_css$Html$Styled$node('a');
-var $rtfeldman$elm_css$Css$border = $rtfeldman$elm_css$Css$prop1('border');
-var $rtfeldman$elm_css$VirtualDom$Styled$property = F2(
-	function (key, value) {
-		return A3(
-			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
-			A2($elm$virtual_dom$VirtualDom$property, key, value),
-			false,
-			'');
-	});
-var $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			$rtfeldman$elm_css$VirtualDom$Styled$property,
-			key,
-			$elm$json$Json$Encode$string(string));
-	});
-var $rtfeldman$elm_css$Html$Styled$Attributes$href = function (url) {
-	return A2($rtfeldman$elm_css$Html$Styled$Attributes$stringProperty, 'href', url);
-};
-var $rtfeldman$elm_css$Html$Styled$img = $rtfeldman$elm_css$Html$Styled$node('img');
-var $rtfeldman$elm_css$Css$marginRight = $rtfeldman$elm_css$Css$prop1('margin-right');
-var $rtfeldman$elm_css$Css$rgba = F4(
-	function (r, g, b, alpha) {
-		return {
-			alpha: alpha,
-			blue: b,
-			color: $rtfeldman$elm_css$Css$Structure$Compatible,
-			green: g,
-			red: r,
-			value: A2(
-				$rtfeldman$elm_css$Css$cssFunction,
-				'rgba',
-				_Utils_ap(
-					A2(
-						$elm$core$List$map,
-						$elm$core$String$fromInt,
-						_List_fromArray(
-							[r, g, b])),
-					_List_fromArray(
-						[
-							$elm$core$String$fromFloat(alpha)
-						])))
-		};
-	});
-var $rtfeldman$elm_css$Html$Styled$Attributes$src = function (url) {
-	return A2($rtfeldman$elm_css$Html$Styled$Attributes$stringProperty, 'src', url);
-};
-var $author$project$Home$imageButton = F2(
+var $author$project$Footer$imageButton = F2(
 	function (uri, path) {
 		return A4(
 			$rtfeldman$elm_css$Html$Styled$styled,
@@ -9248,6 +9192,24 @@ var $rtfeldman$elm_css$Css$paddingTop = $rtfeldman$elm_css$Css$prop1('padding-to
 var $rtfeldman$elm_css$Css$PercentageUnits = {$: 'PercentageUnits'};
 var $rtfeldman$elm_css$Css$pct = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PercentageUnits, '%');
 var $rtfeldman$elm_css$Css$position = $rtfeldman$elm_css$Css$prop1('position');
+var $rtfeldman$elm_css$Css$rgb = F3(
+	function (r, g, b) {
+		return {
+			alpha: 1,
+			blue: b,
+			color: $rtfeldman$elm_css$Css$Structure$Compatible,
+			green: g,
+			red: r,
+			value: A2(
+				$rtfeldman$elm_css$Css$cssFunction,
+				'rgb',
+				A2(
+					$elm$core$List$map,
+					$elm$core$String$fromInt,
+					_List_fromArray(
+						[r, g, b])))
+		};
+	});
 var $rtfeldman$elm_css$Css$top = $rtfeldman$elm_css$Css$prop1('top');
 var $rtfeldman$elm_css$Css$valuesOrNone = function (list) {
 	return $elm$core$List$isEmpty(list) ? {value: 'none'} : {
@@ -9280,7 +9242,7 @@ var $rtfeldman$elm_css$Css$translateY = function (_v0) {
 				[value]))
 	};
 };
-var $author$project$Home$footer = A4(
+var $author$project$Footer$appFooter = A4(
 	$rtfeldman$elm_css$Html$Styled$styled,
 	$rtfeldman$elm_css$Html$Styled$div,
 	_List_fromArray(
@@ -9290,16 +9252,23 @@ var $author$project$Home$footer = A4(
 			$rtfeldman$elm_css$Css$px(0)),
 			$rtfeldman$elm_css$Css$bottom(
 			$rtfeldman$elm_css$Css$px(0)),
+			$rtfeldman$elm_css$Css$backgroundColor(
+			A3($rtfeldman$elm_css$Css$rgb, 255, 255, 255)),
 			$rtfeldman$elm_css$Css$width(
 			$rtfeldman$elm_css$Css$pct(100)),
 			$rtfeldman$elm_css$Css$height(
-			$rtfeldman$elm_css$Css$px(40)),
-			$rtfeldman$elm_css$Css$backgroundColor(
-			A3($rtfeldman$elm_css$Css$rgb, 200, 200, 200)),
+			$rtfeldman$elm_css$Css$px(60)),
 			$rtfeldman$elm_css$Css$paddingTop(
 			$rtfeldman$elm_css$Css$px(10)),
 			$rtfeldman$elm_css$Css$paddingBottom(
 			$rtfeldman$elm_css$Css$px(7)),
+			A5(
+			$rtfeldman$elm_css$Css$boxShadow5,
+			$rtfeldman$elm_css$Css$px(1),
+			$rtfeldman$elm_css$Css$px(1),
+			$rtfeldman$elm_css$Css$px(4),
+			$rtfeldman$elm_css$Css$px(4),
+			A4($rtfeldman$elm_css$Css$rgba, 150, 150, 150, 0.2)),
 			$rtfeldman$elm_css$Css$displayFlex,
 			$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
 		]),
@@ -9321,31 +9290,69 @@ var $author$project$Home$footer = A4(
 			_List_Nil,
 			_List_fromArray(
 				[
-					A2($author$project$Home$imageButton, '/docs', './Images/Heart-Icon.png'),
-					A2($author$project$Home$imageButton, '/', './Images/Home-Icon.svg')
+					A2($author$project$Footer$imageButton, '/docs', './Images/Heart-Icon.png'),
+					A2($author$project$Footer$imageButton, '/', './Images/Home-Icon.svg')
 				]))
 		]));
-var $rtfeldman$elm_css$Html$Styled$form = $rtfeldman$elm_css$Html$Styled$node('form');
-var $rtfeldman$elm_css$Html$Styled$input = $rtfeldman$elm_css$Html$Styled$node('input');
-var $rtfeldman$elm_css$VirtualDom$Styled$attribute = F2(
-	function (key, value) {
+var $elm$core$String$toUpper = _String_toUpper;
+var $author$project$Docs$containsKeyword = F2(
+	function (item, query) {
 		return A3(
-			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
-			A2($elm$virtual_dom$VirtualDom$attribute, key, value),
+			$elm$core$List$foldl,
+			$elm$core$Basics$or,
 			false,
-			'');
+			A2(
+				$elm$core$List$map,
+				function (i) {
+					return A2(
+						$elm$core$String$contains,
+						$elm$core$String$toUpper(query),
+						$elm$core$String$toUpper(i.content));
+				},
+				item.messages));
 	});
-var $rtfeldman$elm_css$Html$Styled$Attributes$list = $rtfeldman$elm_css$VirtualDom$Styled$attribute('list');
-var $rtfeldman$elm_css$Css$flexDirection = $rtfeldman$elm_css$Css$prop1('flex-direction');
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var $rtfeldman$elm_css$Css$flexWrap = $rtfeldman$elm_css$Css$prop1('flex-wrap');
+var $rtfeldman$elm_css$Html$Styled$h1 = $rtfeldman$elm_css$Html$Styled$node('h1');
+var $rtfeldman$elm_css$Css$margin = $rtfeldman$elm_css$Css$prop1('margin');
+var $rtfeldman$elm_css$Css$padding = $rtfeldman$elm_css$Css$prop1('padding');
+var $rtfeldman$elm_css$VirtualDom$Styled$Unstyled = function (a) {
+	return {$: 'Unstyled', a: a};
+};
+var $rtfeldman$elm_css$VirtualDom$Styled$text = function (str) {
+	return $rtfeldman$elm_css$VirtualDom$Styled$Unstyled(
+		$elm$virtual_dom$VirtualDom$text(str));
+};
+var $rtfeldman$elm_css$Html$Styled$text = $rtfeldman$elm_css$VirtualDom$Styled$text;
+var $author$project$Types$GetOneFromPocketbase = function (a) {
+	return {$: 'GetOneFromPocketbase', a: a};
+};
+var $rtfeldman$elm_css$Css$prop3 = F4(
+	function (key, argA, argB, argC) {
+		return A2($rtfeldman$elm_css$Css$property, key, argA.value + (' ' + (argB.value + (' ' + argC.value))));
+	});
+var $rtfeldman$elm_css$Css$border3 = $rtfeldman$elm_css$Css$prop3('border');
+var $rtfeldman$elm_css$Css$color = function (c) {
+	return A2($rtfeldman$elm_css$Css$property, 'color', c.value);
+};
 var $rtfeldman$elm_css$Css$row = {flexDirection: $rtfeldman$elm_css$Css$Structure$Compatible, flexDirectionOrWrap: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'row'};
-var $author$project$Home$mainStyle = _List_fromArray(
-	[
-		$rtfeldman$elm_css$Css$displayFlex,
-		$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
-		$rtfeldman$elm_css$Css$margin($rtfeldman$elm_css$Css$auto)
-	]);
-var $rtfeldman$elm_css$Css$marginTop = $rtfeldman$elm_css$Css$prop1('margin-top');
-var $rtfeldman$elm_css$Css$maxWidth = $rtfeldman$elm_css$Css$prop1('max-width');
+var $rtfeldman$elm_css$Css$column = _Utils_update(
+	$rtfeldman$elm_css$Css$row,
+	{value: 'column'});
+var $rtfeldman$elm_css$Css$flexDirection = $rtfeldman$elm_css$Css$prop1('flex-direction');
+var $rtfeldman$elm_css$Css$fontSize = $rtfeldman$elm_css$Css$prop1('font-size');
+var $rtfeldman$elm_css$Css$minWidth = $rtfeldman$elm_css$Css$prop1('min-width');
+var $rtfeldman$elm_css$Css$none = {backgroundImage: $rtfeldman$elm_css$Css$Structure$Compatible, blockAxisOverflow: $rtfeldman$elm_css$Css$Structure$Compatible, borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, cursor: $rtfeldman$elm_css$Css$Structure$Compatible, display: $rtfeldman$elm_css$Css$Structure$Compatible, hoverCapability: $rtfeldman$elm_css$Css$Structure$Compatible, inlineAxisOverflow: $rtfeldman$elm_css$Css$Structure$Compatible, keyframes: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNone: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNoneOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNumberOrAutoOrNoneOrContent: $rtfeldman$elm_css$Css$Structure$Compatible, listStyleType: $rtfeldman$elm_css$Css$Structure$Compatible, listStyleTypeOrPositionOrImage: $rtfeldman$elm_css$Css$Structure$Compatible, none: $rtfeldman$elm_css$Css$Structure$Compatible, outline: $rtfeldman$elm_css$Css$Structure$Compatible, pointerDevice: $rtfeldman$elm_css$Css$Structure$Compatible, pointerEvents: $rtfeldman$elm_css$Css$Structure$Compatible, resize: $rtfeldman$elm_css$Css$Structure$Compatible, scriptingSupport: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationLine: $rtfeldman$elm_css$Css$Structure$Compatible, textTransform: $rtfeldman$elm_css$Css$Structure$Compatible, touchAction: $rtfeldman$elm_css$Css$Structure$Compatible, transform: $rtfeldman$elm_css$Css$Structure$Compatible, updateFrequency: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'none'};
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -9371,6 +9378,92 @@ var $rtfeldman$elm_css$Html$Styled$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
+var $rtfeldman$elm_css$Css$solid = {borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationStyle: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'solid'};
+var $rtfeldman$elm_css$Html$Styled$span = $rtfeldman$elm_css$Html$Styled$node('span');
+var $rtfeldman$elm_css$Css$textDecoration = $rtfeldman$elm_css$Css$prop1('text-decoration');
+var $author$project$Docs$viewDocsItem = function (item) {
+	return A4(
+		$rtfeldman$elm_css$Html$Styled$styled,
+		$rtfeldman$elm_css$Html$Styled$a,
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Css$fontSize(
+				$rtfeldman$elm_css$Css$px(20)),
+				$rtfeldman$elm_css$Css$textDecoration($rtfeldman$elm_css$Css$none)
+			]),
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Html$Styled$Attributes$href('docs/issue-id/' + item.id),
+				$rtfeldman$elm_css$Html$Styled$Events$onClick(
+				$author$project$Types$GetOneFromPocketbase(item.id))
+			]),
+		_List_fromArray(
+			[
+				A4(
+				$rtfeldman$elm_css$Html$Styled$styled,
+				$rtfeldman$elm_css$Html$Styled$div,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Css$fontSize(
+						$rtfeldman$elm_css$Css$px(20)),
+						$rtfeldman$elm_css$Css$margin(
+						$rtfeldman$elm_css$Css$px(8)),
+						$rtfeldman$elm_css$Css$padding(
+						$rtfeldman$elm_css$Css$px(15)),
+						$rtfeldman$elm_css$Css$minWidth(
+						$rtfeldman$elm_css$Css$px(300)),
+						A5(
+						$rtfeldman$elm_css$Css$boxShadow5,
+						$rtfeldman$elm_css$Css$px(1),
+						$rtfeldman$elm_css$Css$px(1),
+						$rtfeldman$elm_css$Css$px(4),
+						$rtfeldman$elm_css$Css$px(4),
+						A4($rtfeldman$elm_css$Css$rgba, 150, 150, 150, 0.2)),
+						A3(
+						$rtfeldman$elm_css$Css$border3,
+						$rtfeldman$elm_css$Css$px(1),
+						$rtfeldman$elm_css$Css$solid,
+						A3($rtfeldman$elm_css$Css$rgb, 200, 200, 200))
+					]),
+				_List_Nil,
+				_List_fromArray(
+					[
+						A4(
+						$rtfeldman$elm_css$Html$Styled$styled,
+						$rtfeldman$elm_css$Html$Styled$div,
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Css$displayFlex,
+								$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$column),
+								$rtfeldman$elm_css$Css$color(
+								A3($rtfeldman$elm_css$Css$rgb, 0, 0, 0))
+							]),
+						_List_Nil,
+						A2(
+							$elm$core$List$map,
+							function (message) {
+								return A2(
+									$rtfeldman$elm_css$Html$Styled$span,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$text(message.content)
+										]));
+							},
+							item.messages)),
+						$rtfeldman$elm_css$Html$Styled$text('more')
+					]))
+			]));
+};
+var $author$project$Types$UpdateDocsFilterText = function (a) {
+	return {$: 'UpdateDocsFilterText', a: a};
+};
+var $rtfeldman$elm_css$Html$Styled$input = $rtfeldman$elm_css$Html$Styled$node('input');
+var $rtfeldman$elm_css$Css$prop2 = F3(
+	function (key, argA, argB) {
+		return A2($rtfeldman$elm_css$Css$property, key, argA.value + (' ' + argB.value));
+	});
+var $rtfeldman$elm_css$Css$margin2 = $rtfeldman$elm_css$Css$prop2('margin');
 var $rtfeldman$elm_css$Html$Styled$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
 };
@@ -9404,30 +9497,591 @@ var $rtfeldman$elm_css$Html$Styled$Events$onInput = function (tagger) {
 };
 var $rtfeldman$elm_css$Html$Styled$Attributes$placeholder = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('placeholder');
 var $rtfeldman$elm_css$Html$Styled$Attributes$type_ = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('type');
-var $rtfeldman$elm_css$Html$Styled$ul = $rtfeldman$elm_css$Html$Styled$node('ul');
 var $rtfeldman$elm_css$Html$Styled$Attributes$value = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('value');
-var $rtfeldman$elm_css$Html$Styled$li = $rtfeldman$elm_css$Html$Styled$node('li');
-var $author$project$Home$viewMessage = function (choice) {
-	return A2(
-		$rtfeldman$elm_css$Html$Styled$li,
+var $author$project$Docs$viewFilterInput = function (model) {
+	return A4(
+		$rtfeldman$elm_css$Html$Styled$styled,
+		$rtfeldman$elm_css$Html$Styled$input,
+		_List_fromArray(
+			[
+				A2(
+				$rtfeldman$elm_css$Css$margin2,
+				$rtfeldman$elm_css$Css$px(12),
+				$rtfeldman$elm_css$Css$px(8)),
+				$rtfeldman$elm_css$Css$width(
+				$rtfeldman$elm_css$Css$px(400))
+			]),
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Html$Styled$Attributes$type_('text'),
+				$rtfeldman$elm_css$Html$Styled$Attributes$placeholder('Search for Conversation'),
+				$rtfeldman$elm_css$Html$Styled$Attributes$value(model.docsFilterText),
+				$rtfeldman$elm_css$Html$Styled$Events$onInput($author$project$Types$UpdateDocsFilterText)
+			]),
+		_List_Nil);
+};
+var $rtfeldman$elm_css$Css$wrap = {flexDirectionOrWrap: $rtfeldman$elm_css$Css$Structure$Compatible, flexWrap: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'wrap'};
+var $author$project$Docs$view = function (model) {
+	var filteredItems = A2(
+		$elm$core$List$filter,
+		function (i) {
+			return A2($author$project$Docs$containsKeyword, i, model.docsFilterText);
+		},
+		model.suggestedQuestions);
+	return A4(
+		$rtfeldman$elm_css$Html$Styled$styled,
+		$rtfeldman$elm_css$Html$Styled$div,
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Css$margin(
+				$rtfeldman$elm_css$Css$px(0)),
+				$rtfeldman$elm_css$Css$padding(
+				$rtfeldman$elm_css$Css$px(100))
+			]),
 		_List_Nil,
 		_List_fromArray(
 			[
-				$rtfeldman$elm_css$Html$Styled$text(choice.message.content)
+				A2(
+				$rtfeldman$elm_css$Html$Styled$h1,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Html$Styled$text('Bookmarked Conversations')
+					])),
+				$author$project$Docs$viewFilterInput(model),
+				A4(
+				$rtfeldman$elm_css$Html$Styled$styled,
+				$rtfeldman$elm_css$Html$Styled$div,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Css$displayFlex,
+						$rtfeldman$elm_css$Css$flexWrap($rtfeldman$elm_css$Css$wrap)
+					]),
+				_List_Nil,
+				A2(
+					$elm$core$List$map,
+					function (content) {
+						return $author$project$Docs$viewDocsItem(content);
+					},
+					filteredItems)),
+				$author$project$Footer$appFooter
 			]));
 };
-var $rtfeldman$elm_css$Html$Styled$datalist = $rtfeldman$elm_css$Html$Styled$node('datalist');
-var $elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			$elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
+var $author$project$Types$BookmarkMessage = {$: 'BookmarkMessage'};
+var $author$project$Types$DeleteMessage = {$: 'DeleteMessage'};
+var $author$project$Types$SubmitMessage = {$: 'SubmitMessage'};
+var $author$project$Types$UpdateInputText = function (a) {
+	return {$: 'UpdateInputText', a: a};
+};
+var $rtfeldman$elm_css$Css$auto = {alignItemsOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, cursor: $rtfeldman$elm_css$Css$Structure$Compatible, flexBasis: $rtfeldman$elm_css$Css$Structure$Compatible, intOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, justifyContentOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAutoOrCoverOrContain: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNumberOrAutoOrNoneOrContent: $rtfeldman$elm_css$Css$Structure$Compatible, overflow: $rtfeldman$elm_css$Css$Structure$Compatible, pointerEvents: $rtfeldman$elm_css$Css$Structure$Compatible, tableLayout: $rtfeldman$elm_css$Css$Structure$Compatible, textRendering: $rtfeldman$elm_css$Css$Structure$Compatible, touchAction: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'auto'};
+var $rtfeldman$elm_css$Css$Preprocess$ExtendSelector = F2(
+	function (a, b) {
+		return {$: 'ExtendSelector', a: a, b: b};
 	});
+var $rtfeldman$elm_css$Css$Structure$PseudoClassSelector = function (a) {
+	return {$: 'PseudoClassSelector', a: a};
+};
+var $rtfeldman$elm_css$Css$pseudoClass = function (_class) {
+	return $rtfeldman$elm_css$Css$Preprocess$ExtendSelector(
+		$rtfeldman$elm_css$Css$Structure$PseudoClassSelector(_class));
+};
+var $rtfeldman$elm_css$Css$hover = $rtfeldman$elm_css$Css$pseudoClass('hover');
+var $rtfeldman$elm_css$Css$marginLeft = $rtfeldman$elm_css$Css$prop1('margin-left');
+var $rtfeldman$elm_css$Css$underline = {textDecorationLine: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'underline'};
+var $author$project$Footer$btn = A2(
+	$rtfeldman$elm_css$Html$Styled$styled,
+	$rtfeldman$elm_css$Html$Styled$button,
+	_List_fromArray(
+		[
+			$rtfeldman$elm_css$Css$color(
+			A3($rtfeldman$elm_css$Css$rgb, 0, 0, 0)),
+			$rtfeldman$elm_css$Css$hover(
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Css$color(
+					A3($rtfeldman$elm_css$Css$rgb, 255, 255, 255)),
+					$rtfeldman$elm_css$Css$textDecoration($rtfeldman$elm_css$Css$underline)
+				])),
+			$rtfeldman$elm_css$Css$width(
+			$rtfeldman$elm_css$Css$px(50)),
+			$rtfeldman$elm_css$Css$height(
+			$rtfeldman$elm_css$Css$px(50)),
+			$rtfeldman$elm_css$Css$marginLeft(
+			$rtfeldman$elm_css$Css$px(10))
+		]));
+var $rtfeldman$elm_css$Html$Styled$form = $rtfeldman$elm_css$Html$Styled$node('form');
+var $rtfeldman$elm_css$VirtualDom$Styled$attribute = F2(
+	function (key, value) {
+		return A3(
+			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
+			A2($elm$virtual_dom$VirtualDom$attribute, key, value),
+			false,
+			'');
+	});
+var $rtfeldman$elm_css$Html$Styled$Attributes$list = $rtfeldman$elm_css$VirtualDom$Styled$attribute('list');
+var $author$project$Home$mainStyle = _List_fromArray(
+	[
+		$rtfeldman$elm_css$Css$displayFlex,
+		$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$row),
+		$rtfeldman$elm_css$Css$margin($rtfeldman$elm_css$Css$auto)
+	]);
+var $rtfeldman$elm_css$Css$marginTop = $rtfeldman$elm_css$Css$prop1('margin-top');
+var $rtfeldman$elm_css$Css$maxWidth = $rtfeldman$elm_css$Css$prop1('max-width');
+var $rtfeldman$elm_css$Css$borderColor = function (c) {
+	return A2($rtfeldman$elm_css$Css$property, 'border-color', c.value);
+};
+var $rtfeldman$elm_css$Css$prop4 = F5(
+	function (key, argA, argB, argC, argD) {
+		return A2($rtfeldman$elm_css$Css$property, key, argA.value + (' ' + (argB.value + (' ' + (argC.value + (' ' + argD.value))))));
+	});
+var $rtfeldman$elm_css$Css$borderRadius4 = $rtfeldman$elm_css$Css$prop4('border-radius');
+var $rtfeldman$elm_css$Css$withPrecedingHash = function (str) {
+	return A2($elm$core$String$startsWith, '#', str) ? str : A2(
+		$elm$core$String$cons,
+		_Utils_chr('#'),
+		str);
+};
+var $rtfeldman$elm_css$Css$erroneousHex = function (str) {
+	return {
+		alpha: 1,
+		blue: 0,
+		color: $rtfeldman$elm_css$Css$Structure$Compatible,
+		green: 0,
+		red: 0,
+		value: $rtfeldman$elm_css$Css$withPrecedingHash(str)
+	};
+};
+var $elm$core$String$foldr = _String_foldr;
+var $elm$core$String$toList = function (string) {
+	return A3($elm$core$String$foldr, $elm$core$List$cons, _List_Nil, string);
+};
+var $elm$core$String$fromChar = function (_char) {
+	return A2($elm$core$String$cons, _char, '');
+};
+var $elm$core$Basics$pow = _Basics_pow;
+var $rtfeldman$elm_hex$Hex$fromStringHelp = F3(
+	function (position, chars, accumulated) {
+		fromStringHelp:
+		while (true) {
+			if (!chars.b) {
+				return $elm$core$Result$Ok(accumulated);
+			} else {
+				var _char = chars.a;
+				var rest = chars.b;
+				switch (_char.valueOf()) {
+					case '0':
+						var $temp$position = position - 1,
+							$temp$chars = rest,
+							$temp$accumulated = accumulated;
+						position = $temp$position;
+						chars = $temp$chars;
+						accumulated = $temp$accumulated;
+						continue fromStringHelp;
+					case '1':
+						var $temp$position = position - 1,
+							$temp$chars = rest,
+							$temp$accumulated = accumulated + A2($elm$core$Basics$pow, 16, position);
+						position = $temp$position;
+						chars = $temp$chars;
+						accumulated = $temp$accumulated;
+						continue fromStringHelp;
+					case '2':
+						var $temp$position = position - 1,
+							$temp$chars = rest,
+							$temp$accumulated = accumulated + (2 * A2($elm$core$Basics$pow, 16, position));
+						position = $temp$position;
+						chars = $temp$chars;
+						accumulated = $temp$accumulated;
+						continue fromStringHelp;
+					case '3':
+						var $temp$position = position - 1,
+							$temp$chars = rest,
+							$temp$accumulated = accumulated + (3 * A2($elm$core$Basics$pow, 16, position));
+						position = $temp$position;
+						chars = $temp$chars;
+						accumulated = $temp$accumulated;
+						continue fromStringHelp;
+					case '4':
+						var $temp$position = position - 1,
+							$temp$chars = rest,
+							$temp$accumulated = accumulated + (4 * A2($elm$core$Basics$pow, 16, position));
+						position = $temp$position;
+						chars = $temp$chars;
+						accumulated = $temp$accumulated;
+						continue fromStringHelp;
+					case '5':
+						var $temp$position = position - 1,
+							$temp$chars = rest,
+							$temp$accumulated = accumulated + (5 * A2($elm$core$Basics$pow, 16, position));
+						position = $temp$position;
+						chars = $temp$chars;
+						accumulated = $temp$accumulated;
+						continue fromStringHelp;
+					case '6':
+						var $temp$position = position - 1,
+							$temp$chars = rest,
+							$temp$accumulated = accumulated + (6 * A2($elm$core$Basics$pow, 16, position));
+						position = $temp$position;
+						chars = $temp$chars;
+						accumulated = $temp$accumulated;
+						continue fromStringHelp;
+					case '7':
+						var $temp$position = position - 1,
+							$temp$chars = rest,
+							$temp$accumulated = accumulated + (7 * A2($elm$core$Basics$pow, 16, position));
+						position = $temp$position;
+						chars = $temp$chars;
+						accumulated = $temp$accumulated;
+						continue fromStringHelp;
+					case '8':
+						var $temp$position = position - 1,
+							$temp$chars = rest,
+							$temp$accumulated = accumulated + (8 * A2($elm$core$Basics$pow, 16, position));
+						position = $temp$position;
+						chars = $temp$chars;
+						accumulated = $temp$accumulated;
+						continue fromStringHelp;
+					case '9':
+						var $temp$position = position - 1,
+							$temp$chars = rest,
+							$temp$accumulated = accumulated + (9 * A2($elm$core$Basics$pow, 16, position));
+						position = $temp$position;
+						chars = $temp$chars;
+						accumulated = $temp$accumulated;
+						continue fromStringHelp;
+					case 'a':
+						var $temp$position = position - 1,
+							$temp$chars = rest,
+							$temp$accumulated = accumulated + (10 * A2($elm$core$Basics$pow, 16, position));
+						position = $temp$position;
+						chars = $temp$chars;
+						accumulated = $temp$accumulated;
+						continue fromStringHelp;
+					case 'b':
+						var $temp$position = position - 1,
+							$temp$chars = rest,
+							$temp$accumulated = accumulated + (11 * A2($elm$core$Basics$pow, 16, position));
+						position = $temp$position;
+						chars = $temp$chars;
+						accumulated = $temp$accumulated;
+						continue fromStringHelp;
+					case 'c':
+						var $temp$position = position - 1,
+							$temp$chars = rest,
+							$temp$accumulated = accumulated + (12 * A2($elm$core$Basics$pow, 16, position));
+						position = $temp$position;
+						chars = $temp$chars;
+						accumulated = $temp$accumulated;
+						continue fromStringHelp;
+					case 'd':
+						var $temp$position = position - 1,
+							$temp$chars = rest,
+							$temp$accumulated = accumulated + (13 * A2($elm$core$Basics$pow, 16, position));
+						position = $temp$position;
+						chars = $temp$chars;
+						accumulated = $temp$accumulated;
+						continue fromStringHelp;
+					case 'e':
+						var $temp$position = position - 1,
+							$temp$chars = rest,
+							$temp$accumulated = accumulated + (14 * A2($elm$core$Basics$pow, 16, position));
+						position = $temp$position;
+						chars = $temp$chars;
+						accumulated = $temp$accumulated;
+						continue fromStringHelp;
+					case 'f':
+						var $temp$position = position - 1,
+							$temp$chars = rest,
+							$temp$accumulated = accumulated + (15 * A2($elm$core$Basics$pow, 16, position));
+						position = $temp$position;
+						chars = $temp$chars;
+						accumulated = $temp$accumulated;
+						continue fromStringHelp;
+					default:
+						var nonHex = _char;
+						return $elm$core$Result$Err(
+							$elm$core$String$fromChar(nonHex) + ' is not a valid hexadecimal character.');
+				}
+			}
+		}
+	});
+var $elm$core$Result$map = F2(
+	function (func, ra) {
+		if (ra.$ === 'Ok') {
+			var a = ra.a;
+			return $elm$core$Result$Ok(
+				func(a));
+		} else {
+			var e = ra.a;
+			return $elm$core$Result$Err(e);
+		}
+	});
+var $rtfeldman$elm_hex$Hex$fromString = function (str) {
+	if ($elm$core$String$isEmpty(str)) {
+		return $elm$core$Result$Err('Empty strings are not valid hexadecimal strings.');
+	} else {
+		var result = function () {
+			if (A2($elm$core$String$startsWith, '-', str)) {
+				var list = A2(
+					$elm$core$Maybe$withDefault,
+					_List_Nil,
+					$elm$core$List$tail(
+						$elm$core$String$toList(str)));
+				return A2(
+					$elm$core$Result$map,
+					$elm$core$Basics$negate,
+					A3(
+						$rtfeldman$elm_hex$Hex$fromStringHelp,
+						$elm$core$List$length(list) - 1,
+						list,
+						0));
+			} else {
+				return A3(
+					$rtfeldman$elm_hex$Hex$fromStringHelp,
+					$elm$core$String$length(str) - 1,
+					$elm$core$String$toList(str),
+					0);
+			}
+		}();
+		var formatError = function (err) {
+			return A2(
+				$elm$core$String$join,
+				' ',
+				_List_fromArray(
+					['\"' + (str + '\"'), 'is not a valid hexadecimal string because', err]));
+		};
+		return A2($elm$core$Result$mapError, formatError, result);
+	}
+};
+var $elm$core$String$toLower = _String_toLower;
+var $rtfeldman$elm_css$Css$validHex = F5(
+	function (str, _v0, _v1, _v2, _v3) {
+		var r1 = _v0.a;
+		var r2 = _v0.b;
+		var g1 = _v1.a;
+		var g2 = _v1.b;
+		var b1 = _v2.a;
+		var b2 = _v2.b;
+		var a1 = _v3.a;
+		var a2 = _v3.b;
+		var toResult = A2(
+			$elm$core$Basics$composeR,
+			$elm$core$String$fromList,
+			A2($elm$core$Basics$composeR, $elm$core$String$toLower, $rtfeldman$elm_hex$Hex$fromString));
+		var results = _Utils_Tuple2(
+			_Utils_Tuple2(
+				toResult(
+					_List_fromArray(
+						[r1, r2])),
+				toResult(
+					_List_fromArray(
+						[g1, g2]))),
+			_Utils_Tuple2(
+				toResult(
+					_List_fromArray(
+						[b1, b2])),
+				toResult(
+					_List_fromArray(
+						[a1, a2]))));
+		if ((((results.a.a.$ === 'Ok') && (results.a.b.$ === 'Ok')) && (results.b.a.$ === 'Ok')) && (results.b.b.$ === 'Ok')) {
+			var _v5 = results.a;
+			var red = _v5.a.a;
+			var green = _v5.b.a;
+			var _v6 = results.b;
+			var blue = _v6.a.a;
+			var alpha = _v6.b.a;
+			return {
+				alpha: alpha / 255,
+				blue: blue,
+				color: $rtfeldman$elm_css$Css$Structure$Compatible,
+				green: green,
+				red: red,
+				value: $rtfeldman$elm_css$Css$withPrecedingHash(str)
+			};
+		} else {
+			return $rtfeldman$elm_css$Css$erroneousHex(str);
+		}
+	});
+var $rtfeldman$elm_css$Css$hex = function (str) {
+	var withoutHash = A2($elm$core$String$startsWith, '#', str) ? A2($elm$core$String$dropLeft, 1, str) : str;
+	var _v0 = $elm$core$String$toList(withoutHash);
+	_v0$4:
+	while (true) {
+		if ((_v0.b && _v0.b.b) && _v0.b.b.b) {
+			if (!_v0.b.b.b.b) {
+				var r = _v0.a;
+				var _v1 = _v0.b;
+				var g = _v1.a;
+				var _v2 = _v1.b;
+				var b = _v2.a;
+				return A5(
+					$rtfeldman$elm_css$Css$validHex,
+					str,
+					_Utils_Tuple2(r, r),
+					_Utils_Tuple2(g, g),
+					_Utils_Tuple2(b, b),
+					_Utils_Tuple2(
+						_Utils_chr('f'),
+						_Utils_chr('f')));
+			} else {
+				if (!_v0.b.b.b.b.b) {
+					var r = _v0.a;
+					var _v3 = _v0.b;
+					var g = _v3.a;
+					var _v4 = _v3.b;
+					var b = _v4.a;
+					var _v5 = _v4.b;
+					var a = _v5.a;
+					return A5(
+						$rtfeldman$elm_css$Css$validHex,
+						str,
+						_Utils_Tuple2(r, r),
+						_Utils_Tuple2(g, g),
+						_Utils_Tuple2(b, b),
+						_Utils_Tuple2(a, a));
+				} else {
+					if (_v0.b.b.b.b.b.b) {
+						if (!_v0.b.b.b.b.b.b.b) {
+							var r1 = _v0.a;
+							var _v6 = _v0.b;
+							var r2 = _v6.a;
+							var _v7 = _v6.b;
+							var g1 = _v7.a;
+							var _v8 = _v7.b;
+							var g2 = _v8.a;
+							var _v9 = _v8.b;
+							var b1 = _v9.a;
+							var _v10 = _v9.b;
+							var b2 = _v10.a;
+							return A5(
+								$rtfeldman$elm_css$Css$validHex,
+								str,
+								_Utils_Tuple2(r1, r2),
+								_Utils_Tuple2(g1, g2),
+								_Utils_Tuple2(b1, b2),
+								_Utils_Tuple2(
+									_Utils_chr('f'),
+									_Utils_chr('f')));
+						} else {
+							if (_v0.b.b.b.b.b.b.b.b && (!_v0.b.b.b.b.b.b.b.b.b)) {
+								var r1 = _v0.a;
+								var _v11 = _v0.b;
+								var r2 = _v11.a;
+								var _v12 = _v11.b;
+								var g1 = _v12.a;
+								var _v13 = _v12.b;
+								var g2 = _v13.a;
+								var _v14 = _v13.b;
+								var b1 = _v14.a;
+								var _v15 = _v14.b;
+								var b2 = _v15.a;
+								var _v16 = _v15.b;
+								var a1 = _v16.a;
+								var _v17 = _v16.b;
+								var a2 = _v17.a;
+								return A5(
+									$rtfeldman$elm_css$Css$validHex,
+									str,
+									_Utils_Tuple2(r1, r2),
+									_Utils_Tuple2(g1, g2),
+									_Utils_Tuple2(b1, b2),
+									_Utils_Tuple2(a1, a2));
+							} else {
+								break _v0$4;
+							}
+						}
+					} else {
+						break _v0$4;
+					}
+				}
+			}
+		} else {
+			break _v0$4;
+		}
+	}
+	return $rtfeldman$elm_css$Css$erroneousHex(str);
+};
+var $rtfeldman$elm_css$Css$padding4 = $rtfeldman$elm_css$Css$prop4('padding');
+var $author$project$Home$viewAssistantMessage = F2(
+	function (message, isLoading) {
+		return A4(
+			$rtfeldman$elm_css$Html$Styled$styled,
+			$rtfeldman$elm_css$Html$Styled$div,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Css$fontSize(
+					$rtfeldman$elm_css$Css$px(20)),
+					$rtfeldman$elm_css$Css$backgroundColor(
+					$rtfeldman$elm_css$Css$hex('#b2f5b2')),
+					A4(
+					$rtfeldman$elm_css$Css$borderRadius4,
+					$rtfeldman$elm_css$Css$px(0),
+					$rtfeldman$elm_css$Css$px(0),
+					$rtfeldman$elm_css$Css$px(5),
+					$rtfeldman$elm_css$Css$px(5)),
+					$rtfeldman$elm_css$Css$border(
+					$rtfeldman$elm_css$Css$px(1)),
+					$rtfeldman$elm_css$Css$borderColor(
+					$rtfeldman$elm_css$Css$hex('#ededed')),
+					A4(
+					$rtfeldman$elm_css$Css$padding4,
+					$rtfeldman$elm_css$Css$px(10),
+					$rtfeldman$elm_css$Css$px(10),
+					$rtfeldman$elm_css$Css$px(7),
+					$rtfeldman$elm_css$Css$px(8))
+				]),
+			_List_Nil,
+			_List_fromArray(
+				[
+					isLoading ? $rtfeldman$elm_css$Html$Styled$text('Loading...') : $rtfeldman$elm_css$Html$Styled$text(message.content)
+				]));
+	});
+var $rtfeldman$elm_css$Css$bold = {fontWeight: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'bold'};
+var $rtfeldman$elm_css$Css$fontWeight = function (_v0) {
+	var value = _v0.value;
+	return A2($rtfeldman$elm_css$Css$property, 'font-weight', value);
+};
+var $author$project$Home$viewUserMessage = function (message) {
+	return A4(
+		$rtfeldman$elm_css$Html$Styled$styled,
+		$rtfeldman$elm_css$Html$Styled$div,
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Css$fontSize(
+				$rtfeldman$elm_css$Css$px(20)),
+				$rtfeldman$elm_css$Css$backgroundColor(
+				$rtfeldman$elm_css$Css$hex('#ffa')),
+				A4(
+				$rtfeldman$elm_css$Css$borderRadius4,
+				$rtfeldman$elm_css$Css$px(5),
+				$rtfeldman$elm_css$Css$px(5),
+				$rtfeldman$elm_css$Css$px(0),
+				$rtfeldman$elm_css$Css$px(0)),
+				$rtfeldman$elm_css$Css$border(
+				$rtfeldman$elm_css$Css$px(1)),
+				$rtfeldman$elm_css$Css$borderColor(
+				$rtfeldman$elm_css$Css$hex('#ededed')),
+				A4(
+				$rtfeldman$elm_css$Css$padding4,
+				$rtfeldman$elm_css$Css$px(10),
+				$rtfeldman$elm_css$Css$px(10),
+				$rtfeldman$elm_css$Css$px(7),
+				$rtfeldman$elm_css$Css$px(8)),
+				$rtfeldman$elm_css$Css$marginTop(
+				$rtfeldman$elm_css$Css$px(20)),
+				$rtfeldman$elm_css$Css$fontWeight($rtfeldman$elm_css$Css$bold)
+			]),
+		_List_Nil,
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Html$Styled$text(message.content)
+			]));
+};
+var $author$project$Home$viewMessage = F2(
+	function (choice, isLoading) {
+		return _Utils_eq(choice.message.role, $author$project$Types$Assistant) ? A2($author$project$Home$viewAssistantMessage, choice.message, isLoading) : $author$project$Home$viewUserMessage(choice.message);
+	});
+var $rtfeldman$elm_css$Html$Styled$datalist = $rtfeldman$elm_css$Html$Styled$node('datalist');
 var $rtfeldman$elm_css$Html$Styled$Attributes$id = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('id');
 var $rtfeldman$elm_css$Html$Styled$option = $rtfeldman$elm_css$Html$Styled$node('option');
 var $author$project$Home$viewSuggestedQuestions = function (model) {
@@ -9487,7 +10141,9 @@ var $author$project$Home$view = function (model) {
 		_List_fromArray(
 			[
 				$rtfeldman$elm_css$Css$margin(
-				$rtfeldman$elm_css$Css$px(0))
+				$rtfeldman$elm_css$Css$px(0)),
+				$rtfeldman$elm_css$Css$paddingBottom(
+				$rtfeldman$elm_css$Css$px(100))
 			]),
 		_List_Nil,
 		_List_fromArray(
@@ -9526,6 +10182,8 @@ var $author$project$Home$view = function (model) {
 										$rtfeldman$elm_css$Html$Styled$input,
 										_List_fromArray(
 											[
+												$rtfeldman$elm_css$Css$fontSize(
+												$rtfeldman$elm_css$Css$px(20)),
 												$rtfeldman$elm_css$Css$width(
 												$rtfeldman$elm_css$Css$px(400))
 											]),
@@ -9539,7 +10197,7 @@ var $author$project$Home$view = function (model) {
 											]),
 										_List_Nil),
 										A2(
-										$author$project$Home$btn,
+										$author$project$Footer$btn,
 										_List_fromArray(
 											[
 												$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Types$SubmitMessage),
@@ -9557,10 +10215,10 @@ var $author$project$Home$view = function (model) {
 						$rtfeldman$elm_css$Html$Styled$div,
 						_List_fromArray(
 							[
-								$rtfeldman$elm_css$Css$marginRight(
-								$rtfeldman$elm_css$Css$px(100)),
+								$rtfeldman$elm_css$Css$marginRight($rtfeldman$elm_css$Css$auto),
 								$rtfeldman$elm_css$Css$marginLeft($rtfeldman$elm_css$Css$auto),
-								$rtfeldman$elm_css$Css$marginTop($rtfeldman$elm_css$Css$auto),
+								$rtfeldman$elm_css$Css$marginTop(
+								$rtfeldman$elm_css$Css$px(60)),
 								$rtfeldman$elm_css$Css$maxWidth(
 								$rtfeldman$elm_css$Css$px(800))
 							]),
@@ -9605,12 +10263,37 @@ var $author$project$Home$view = function (model) {
 										$rtfeldman$elm_css$Html$Styled$text('')
 									])),
 								A2(
-								$rtfeldman$elm_css$Html$Styled$ul,
+								$rtfeldman$elm_css$Html$Styled$div,
 								_List_Nil,
-								A2($elm$core$List$map, $author$project$Home$viewMessage, model.choices))
+								A2(
+									$elm$core$List$map,
+									function (choice) {
+										return A2($author$project$Home$viewMessage, choice, model.isLoading);
+									},
+									model.choices))
 							])),
-						$author$project$Home$footer
+						$author$project$Footer$appFooter
 					]))
+			]));
+};
+var $rtfeldman$elm_css$Html$Styled$ul = $rtfeldman$elm_css$Html$Styled$node('ul');
+var $rtfeldman$elm_css$Html$Styled$p = $rtfeldman$elm_css$Html$Styled$node('p');
+var $author$project$Docs$viewMessage = function (message) {
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A4(
+				$rtfeldman$elm_css$Html$Styled$styled,
+				$rtfeldman$elm_css$Html$Styled$div,
+				_List_Nil,
+				_List_Nil,
+				_List_fromArray(
+					[
+						_Utils_eq(message.role, $author$project$Types$User) ? $author$project$Home$viewUserMessage(message) : A2($author$project$Home$viewAssistantMessage, message, false)
+					])),
+				A2($rtfeldman$elm_css$Html$Styled$p, _List_Nil, _List_Nil)
 			]));
 };
 var $author$project$Docs$viewDetail = F2(
@@ -9621,18 +10304,34 @@ var $author$project$Docs$viewDetail = F2(
 			_List_fromArray(
 				[
 					$rtfeldman$elm_css$Css$margin(
-					$rtfeldman$elm_css$Css$px(0))
+					$rtfeldman$elm_css$Css$px(0)),
+					$rtfeldman$elm_css$Css$padding(
+					$rtfeldman$elm_css$Css$px(100))
 				]),
 			_List_Nil,
 			_List_fromArray(
 				[
-					A2(
-					$rtfeldman$elm_css$Html$Styled$h1,
+					A4(
+					$rtfeldman$elm_css$Html$Styled$styled,
+					$rtfeldman$elm_css$Html$Styled$div,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Css$marginLeft($rtfeldman$elm_css$Css$auto),
+							$rtfeldman$elm_css$Css$marginRight($rtfeldman$elm_css$Css$auto),
+							$rtfeldman$elm_css$Css$marginTop(
+							$rtfeldman$elm_css$Css$px(100)),
+							$rtfeldman$elm_css$Css$maxWidth(
+							$rtfeldman$elm_css$Css$px(800))
+						]),
 					_List_Nil,
 					_List_fromArray(
 						[
-							$rtfeldman$elm_css$Html$Styled$text('Detail Page')
-						]))
+							A2(
+							$rtfeldman$elm_css$Html$Styled$ul,
+							_List_Nil,
+							A2($elm$core$List$map, $author$project$Docs$viewMessage, model.detailPage.messages))
+						])),
+					$author$project$Footer$appFooter
 				]));
 	});
 var $author$project$Main$viewPage = F2(
