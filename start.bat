@@ -6,4 +6,4 @@ if not exist server\pocketbase (
 )
 
 cd server && start pocketbase serve
-cd client && elm reactor
+cd client && elm-live src/Main.elm --pushstate -- --output=main.js
