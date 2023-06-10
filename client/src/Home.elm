@@ -21,7 +21,7 @@ view model = styled div [margin (px 0), paddingBottom (px 100)] []
           styled input [padding  (px 12), fontSize (px 20), marginBottom (px 30), backgroundColor (hex (if model.apiKey == "" then "#ff00007a" else "#44ff007a")), borderRadius (px 5), border (px 1), borderStyle solid, boxShadow none, Css.width (px 400)] [
                   type_ "text"
                 , list "aiSearch"
-                , placeholder (if model.apiKey == "" then "Enter API Key" else "Ask the AI")
+                , placeholder model.placeholder
                 , value model.inputText
                 , onInput UpdateInputText] []
           , btn [onClick (if model.apiKey == "" then SubmitApiKey else SubmitMessage), type_ "button"] [text "GO!" ]
@@ -32,8 +32,8 @@ view model = styled div [margin (px 0), paddingBottom (px 100)] []
         div [] 
         (if (length model.choices) > 0 
             then 
-                [ button [onClick BookmarkMessage, type_ "button"] [ text "Save" ]
-                , button [onClick DeleteMessage] [ text "Delete" ] 
+                [ styled button [if model.isLoading then opacity (num 0) else opacity (num 1), border (px 0), padding2 (px 7) (px 20), backgroundColor (hex "#009e00"), color (hex "#fff"), textTransform lowercase, borderRadius (px 7), letterSpacing (px 1), fontWeight normal] [onClick BookmarkMessage, type_ "button"] [ text "Save" ]
+                , styled button [if model.isLoading then opacity (num 0) else opacity (num 1), marginLeft (px 10), border (px 0), padding2 (px 7) (px 20), backgroundColor (hex "#e83535"), color (hex "#fff"), textTransform lowercase, borderRadius (px 7), letterSpacing (px 1), fontWeight normal] [onClick DeleteMessage] [ text "Delete" ] 
                 ]
             else 
                 [ text "" ]

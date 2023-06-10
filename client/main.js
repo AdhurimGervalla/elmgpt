@@ -6251,6 +6251,7 @@ var $author$project$Main$init = F3(
 				isLoading: false,
 				key: key,
 				page: $author$project$Types$HomePage,
+				placeholder: 'Enter API key',
 				suggestedQuestions: _List_Nil,
 				url: url
 			},
@@ -6588,12 +6589,17 @@ var $author$project$Main$update = F2(
 											return i;
 										},
 										apiResponse.choices)),
-								isLoading: false
+								isLoading: false,
+								placeholder: 'Any other questions?'
 							}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					var httpError = result.a;
-					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{apiKey: '', choices: _List_Nil, isLoading: false, placeholder: 'Please enter a valid API key'}),
+						$elm$core$Platform$Cmd$none);
 				}
 			case 'GotResponseFromPocketbase':
 				var result = msg.a;
@@ -6641,7 +6647,7 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{apiKey: model.inputText, inputText: '', isLoading: false}),
+						{apiKey: model.inputText, inputText: '', isLoading: false, placeholder: 'Ask me anything'}),
 					$elm$core$Platform$Cmd$none);
 			case 'SubmitMessage':
 				var userMessage = {
@@ -6678,7 +6684,7 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{choices: _List_Nil, inputText: ''}),
+						{choices: _List_Nil, inputText: '', placeholder: 'Ask me anything'}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
@@ -10001,7 +10007,12 @@ var $author$project$Footer$btn = A2(
 			$rtfeldman$elm_css$Css$px(10))
 		]));
 var $rtfeldman$elm_css$Html$Styled$Attributes$class = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('className');
+var $rtfeldman$elm_css$Css$fontWeight = function (_v0) {
+	var value = _v0.value;
+	return A2($rtfeldman$elm_css$Css$property, 'font-weight', value);
+};
 var $rtfeldman$elm_css$Html$Styled$form = $rtfeldman$elm_css$Html$Styled$node('form');
+var $rtfeldman$elm_css$Css$letterSpacing = $rtfeldman$elm_css$Css$prop1('letter-spacing');
 var $rtfeldman$elm_css$VirtualDom$Styled$attribute = F2(
 	function (key, value) {
 		return A3(
@@ -10011,6 +10022,7 @@ var $rtfeldman$elm_css$VirtualDom$Styled$attribute = F2(
 			'');
 	});
 var $rtfeldman$elm_css$Html$Styled$Attributes$list = $rtfeldman$elm_css$VirtualDom$Styled$attribute('list');
+var $rtfeldman$elm_css$Css$lowercase = {textTransform: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'lowercase'};
 var $author$project$Home$mainStyle = _List_fromArray(
 	[
 		$rtfeldman$elm_css$Css$displayFlex,
@@ -10019,6 +10031,23 @@ var $author$project$Home$mainStyle = _List_fromArray(
 	]);
 var $rtfeldman$elm_css$Css$marginTop = $rtfeldman$elm_css$Css$prop1('margin-top');
 var $rtfeldman$elm_css$Css$maxWidth = $rtfeldman$elm_css$Css$prop1('max-width');
+var $rtfeldman$elm_css$Css$normal = {featureTagValue: $rtfeldman$elm_css$Css$Structure$Compatible, fontStyle: $rtfeldman$elm_css$Css$Structure$Compatible, fontWeight: $rtfeldman$elm_css$Css$Structure$Compatible, overflowWrap: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'normal', whiteSpace: $rtfeldman$elm_css$Css$Structure$Compatible};
+var $rtfeldman$elm_css$Css$UnitlessFloat = {$: 'UnitlessFloat'};
+var $rtfeldman$elm_css$Css$num = function (val) {
+	return {
+		lengthOrNumber: $rtfeldman$elm_css$Css$Structure$Compatible,
+		lengthOrNumberOrAutoOrNoneOrContent: $rtfeldman$elm_css$Css$Structure$Compatible,
+		number: $rtfeldman$elm_css$Css$Structure$Compatible,
+		numberOrInfinite: $rtfeldman$elm_css$Css$Structure$Compatible,
+		numericValue: val,
+		unitLabel: '',
+		units: $rtfeldman$elm_css$Css$UnitlessFloat,
+		value: $elm$core$String$fromFloat(val)
+	};
+};
+var $rtfeldman$elm_css$Css$opacity = $rtfeldman$elm_css$Css$prop1('opacity');
+var $rtfeldman$elm_css$Css$padding2 = $rtfeldman$elm_css$Css$prop2('padding');
+var $rtfeldman$elm_css$Css$textTransform = $rtfeldman$elm_css$Css$prop1('text-transform');
 var $rtfeldman$elm_css$Css$borderColor = function (c) {
 	return A2($rtfeldman$elm_css$Css$property, 'border-color', c.value);
 };
@@ -10063,10 +10092,6 @@ var $author$project$Home$viewAssistantMessage = F2(
 				]));
 	});
 var $rtfeldman$elm_css$Css$bold = {fontWeight: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'bold'};
-var $rtfeldman$elm_css$Css$fontWeight = function (_v0) {
-	var value = _v0.value;
-	return A2($rtfeldman$elm_css$Css$property, 'font-weight', value);
-};
 var $author$project$Home$viewUserMessage = function (message) {
 	return A4(
 		$rtfeldman$elm_css$Html$Styled$styled,
@@ -10230,8 +10255,7 @@ var $author$project$Home$view = function (model) {
 											[
 												$rtfeldman$elm_css$Html$Styled$Attributes$type_('text'),
 												$rtfeldman$elm_css$Html$Styled$Attributes$list('aiSearch'),
-												$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(
-												(model.apiKey === '') ? 'Enter API Key' : 'Ask the AI'),
+												$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(model.placeholder),
 												$rtfeldman$elm_css$Html$Styled$Attributes$value(model.inputText),
 												$rtfeldman$elm_css$Html$Styled$Events$onInput($author$project$Types$UpdateInputText)
 											]),
@@ -10278,8 +10302,31 @@ var $author$project$Home$view = function (model) {
 								_List_Nil,
 								($elm$core$List$length(model.choices) > 0) ? _List_fromArray(
 									[
-										A2(
+										A4(
+										$rtfeldman$elm_css$Html$Styled$styled,
 										$rtfeldman$elm_css$Html$Styled$button,
+										_List_fromArray(
+											[
+												model.isLoading ? $rtfeldman$elm_css$Css$opacity(
+												$rtfeldman$elm_css$Css$num(0)) : $rtfeldman$elm_css$Css$opacity(
+												$rtfeldman$elm_css$Css$num(1)),
+												$rtfeldman$elm_css$Css$border(
+												$rtfeldman$elm_css$Css$px(0)),
+												A2(
+												$rtfeldman$elm_css$Css$padding2,
+												$rtfeldman$elm_css$Css$px(7),
+												$rtfeldman$elm_css$Css$px(20)),
+												$rtfeldman$elm_css$Css$backgroundColor(
+												$rtfeldman$elm_css$Css$hex('#009e00')),
+												$rtfeldman$elm_css$Css$color(
+												$rtfeldman$elm_css$Css$hex('#fff')),
+												$rtfeldman$elm_css$Css$textTransform($rtfeldman$elm_css$Css$lowercase),
+												$rtfeldman$elm_css$Css$borderRadius(
+												$rtfeldman$elm_css$Css$px(7)),
+												$rtfeldman$elm_css$Css$letterSpacing(
+												$rtfeldman$elm_css$Css$px(1)),
+												$rtfeldman$elm_css$Css$fontWeight($rtfeldman$elm_css$Css$normal)
+											]),
 										_List_fromArray(
 											[
 												$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Types$BookmarkMessage),
@@ -10289,8 +10336,33 @@ var $author$project$Home$view = function (model) {
 											[
 												$rtfeldman$elm_css$Html$Styled$text('Save')
 											])),
-										A2(
+										A4(
+										$rtfeldman$elm_css$Html$Styled$styled,
 										$rtfeldman$elm_css$Html$Styled$button,
+										_List_fromArray(
+											[
+												model.isLoading ? $rtfeldman$elm_css$Css$opacity(
+												$rtfeldman$elm_css$Css$num(0)) : $rtfeldman$elm_css$Css$opacity(
+												$rtfeldman$elm_css$Css$num(1)),
+												$rtfeldman$elm_css$Css$marginLeft(
+												$rtfeldman$elm_css$Css$px(10)),
+												$rtfeldman$elm_css$Css$border(
+												$rtfeldman$elm_css$Css$px(0)),
+												A2(
+												$rtfeldman$elm_css$Css$padding2,
+												$rtfeldman$elm_css$Css$px(7),
+												$rtfeldman$elm_css$Css$px(20)),
+												$rtfeldman$elm_css$Css$backgroundColor(
+												$rtfeldman$elm_css$Css$hex('#e83535')),
+												$rtfeldman$elm_css$Css$color(
+												$rtfeldman$elm_css$Css$hex('#fff')),
+												$rtfeldman$elm_css$Css$textTransform($rtfeldman$elm_css$Css$lowercase),
+												$rtfeldman$elm_css$Css$borderRadius(
+												$rtfeldman$elm_css$Css$px(7)),
+												$rtfeldman$elm_css$Css$letterSpacing(
+												$rtfeldman$elm_css$Css$px(1)),
+												$rtfeldman$elm_css$Css$fontWeight($rtfeldman$elm_css$Css$normal)
+											]),
 										_List_fromArray(
 											[
 												$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Types$DeleteMessage)

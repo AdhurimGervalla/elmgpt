@@ -32,6 +32,7 @@ init flags url key =
       , detailPage =  { id = "", collectionId = "", collectionName = "", created = "", updated = "", messages = [], scraped = False }
       , isLoading = False
       , apiKey = ""
+      , placeholder = "Enter API key"
       }
     , getSuggestedQuestionsCmd
     )
@@ -108,10 +109,10 @@ update msg model =
         GotResponse result ->
             case result of
                 Ok apiResponse ->
-                    ( {model | choices = model.choices ++ List.map (\i -> i) apiResponse.choices, isLoading = False}, Cmd.none )
+                    ( {model | placeholder = "Any other questions?", choices = model.choices ++ List.map (\i -> i) apiResponse.choices, isLoading = False}, Cmd.none )
 
                 Err httpError ->
-                    ( model, Cmd.none )
+                    ( {model | apiKey = "", choices = [], isLoading = False, placeholder = "Please enter a valid API key"}, Cmd.none )
 
 
         GotResponseFromPocketbase result ->
@@ -142,7 +143,7 @@ update msg model =
                     ( model, Cmd.none )
 
         SubmitApiKey ->
-            ({ model | apiKey = model.inputText, inputText = "", isLoading = False }, Cmd.none)
+            ({ model | apiKey = model.inputText, inputText = "", isLoading = False, placeholder = "Ask me anything" }, Cmd.none)
 
         SubmitMessage ->
             let
@@ -157,4 +158,4 @@ update msg model =
                 cmd = bookmarkChat data
             in
             ( model, cmd)
-        DeleteMessage ->( {model | choices = [], inputText = ""}, Cmd.none )
+        DeleteMessage ->( {model | choices = [], inputText = "", placeholder = "Ask me anything"}, Cmd.none )

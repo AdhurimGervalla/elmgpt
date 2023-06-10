@@ -51,6 +51,7 @@ type alias Model =
     , page : Page
     , isLoading : Bool
     , apiKey : String
+    , placeholder : String
     }
 
 type alias Choice =
