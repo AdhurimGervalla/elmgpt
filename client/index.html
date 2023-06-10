@@ -10299,8 +10299,6 @@ var $author$project$Home$view = function (model) {
 					]))
 			]));
 };
-var $rtfeldman$elm_css$Html$Styled$ul = $rtfeldman$elm_css$Html$Styled$node('ul');
-var $rtfeldman$elm_css$Html$Styled$p = $rtfeldman$elm_css$Html$Styled$node('p');
 var $author$project$Docs$viewMessage = function (message) {
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
@@ -10315,8 +10313,7 @@ var $author$project$Docs$viewMessage = function (message) {
 				_List_fromArray(
 					[
 						_Utils_eq(message.role, $author$project$Types$User) ? $author$project$Home$viewUserMessage(message) : A2($author$project$Home$viewAssistantMessage, message, false)
-					])),
-				A2($rtfeldman$elm_css$Html$Styled$p, _List_Nil, _List_Nil)
+					]))
 			]));
 };
 var $author$project$Docs$viewDetail = F2(
@@ -10350,7 +10347,14 @@ var $author$project$Docs$viewDetail = F2(
 					_List_fromArray(
 						[
 							A2(
-							$rtfeldman$elm_css$Html$Styled$ul,
+							$rtfeldman$elm_css$Html$Styled$h1,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$text('Conversation Detail')
+								])),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
 							_List_Nil,
 							A2($elm$core$List$map, $author$project$Docs$viewMessage, model.detailPage.messages))
 						])),

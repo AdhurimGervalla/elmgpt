@@ -50,18 +50,16 @@ viewDetail : String -> Model ->  Html Msg
 viewDetail slug model = 
     styled div [margin (px 0), padding (px 100)] []
   [ 
-    
   styled div [ marginLeft auto, marginRight auto, marginTop (px 100), maxWidth (px 800)] [] [
-      
-        ul [] (List.map viewMessage model.detailPage.messages)
+        h1 [] [text "Conversation Detail"],  
+        div [] (List.map viewMessage model.detailPage.messages)
   ]
   , appFooter
   ]
 
 viewMessage : Message -> Html Msg
 viewMessage message =
-    div [] [styled div [] [] [ if message.role == User then viewUserMessage message else viewAssistantMessage message False],
-            p [] []]
+    div [] [styled div [] [] [ if message.role == User then viewUserMessage message else viewAssistantMessage message False]]
 
 getOne : String -> Cmd Msg
 getOne id =
