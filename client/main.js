@@ -6243,6 +6243,7 @@ var $author$project$Main$init = F3(
 	function (flags, url, key) {
 		return _Utils_Tuple2(
 			{
+				apiKey: '',
 				choices: _List_Nil,
 				detailPage: {collectionId: '', collectionName: '', created: '', id: '', messages: _List_Nil, scraped: false, updated: ''},
 				docsFilterText: '',
@@ -6350,7 +6351,6 @@ var $author$project$Home$bookmarkChat = function (conversation) {
 var $author$project$Types$GotResponse = function (a) {
 	return {$: 'GotResponse', a: a};
 };
-var $author$project$Home$apiKey = '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';
 var $author$project$Types$ChatCompletion = F3(
 	function (model, messages, temperature) {
 		return {messages: messages, model: model, temperature: temperature};
@@ -6428,7 +6428,7 @@ var $author$project$Home$chatWithAi = F2(
 				expect: A2($elm$http$Http$expectJson, $author$project$Types$GotResponse, $author$project$Decoders$decodeApiResponse),
 				headers: _List_fromArray(
 					[
-						A2($elm$http$Http$header, 'Authorization', 'Bearer ' + $author$project$Home$apiKey)
+						A2($elm$http$Http$header, 'Authorization', 'Bearer ' + model.apiKey)
 					]),
 				method: 'POST',
 				timeout: $elm$core$Maybe$Nothing,
@@ -6637,6 +6637,12 @@ var $author$project$Main$update = F2(
 					var httpError = result.a;
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
+			case 'SubmitApiKey':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{apiKey: model.inputText, inputText: '', isLoading: false}),
+					$elm$core$Platform$Cmd$none);
 			case 'SubmitMessage':
 				var userMessage = {
 					finish_reason: '',
@@ -9290,8 +9296,8 @@ var $author$project$Footer$appFooter = A4(
 			_List_Nil,
 			_List_fromArray(
 				[
-					A2($author$project$Footer$imageButton, '/docs', './Images/Heart-Icon.png'),
-					A2($author$project$Footer$imageButton, '/', './Images/Home-Icon.svg')
+					A2($author$project$Footer$imageButton, '/docs', '/Images/Heart-Icon.png'),
+					A2($author$project$Footer$imageButton, '/', '/Images/Home-Icon.svg')
 				]))
 		]));
 var $elm$core$String$toUpper = _String_toUpper;
@@ -9569,6 +9575,7 @@ var $author$project$Docs$view = function (model) {
 };
 var $author$project$Types$BookmarkMessage = {$: 'BookmarkMessage'};
 var $author$project$Types$DeleteMessage = {$: 'DeleteMessage'};
+var $author$project$Types$SubmitApiKey = {$: 'SubmitApiKey'};
 var $author$project$Types$SubmitMessage = {$: 'SubmitMessage'};
 var $author$project$Types$UpdateInputText = function (a) {
 	return {$: 'UpdateInputText', a: a};
@@ -9609,6 +9616,7 @@ var $author$project$Footer$btn = A2(
 			$rtfeldman$elm_css$Css$marginLeft(
 			$rtfeldman$elm_css$Css$px(10))
 		]));
+var $rtfeldman$elm_css$Html$Styled$Attributes$class = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('className');
 var $rtfeldman$elm_css$Html$Styled$form = $rtfeldman$elm_css$Html$Styled$node('form');
 var $rtfeldman$elm_css$VirtualDom$Styled$attribute = F2(
 	function (key, value) {
@@ -10033,7 +10041,7 @@ var $author$project$Home$viewAssistantMessage = F2(
 			_List_Nil,
 			_List_fromArray(
 				[
-					isLoading ? $rtfeldman$elm_css$Html$Styled$text('Loading...') : $rtfeldman$elm_css$Html$Styled$text(message.content)
+					$rtfeldman$elm_css$Html$Styled$text(message.content)
 				]));
 	});
 var $rtfeldman$elm_css$Css$bold = {fontWeight: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'bold'};
@@ -10191,7 +10199,8 @@ var $author$project$Home$view = function (model) {
 											[
 												$rtfeldman$elm_css$Html$Styled$Attributes$type_('text'),
 												$rtfeldman$elm_css$Html$Styled$Attributes$list('aiSearch'),
-												$rtfeldman$elm_css$Html$Styled$Attributes$placeholder('Ask the AI'),
+												$rtfeldman$elm_css$Html$Styled$Attributes$placeholder(
+												(model.apiKey === '') ? 'Enter API Key' : 'Ask the AI'),
 												$rtfeldman$elm_css$Html$Styled$Attributes$value(model.inputText),
 												$rtfeldman$elm_css$Html$Styled$Events$onInput($author$project$Types$UpdateInputText)
 											]),
@@ -10200,7 +10209,8 @@ var $author$project$Home$view = function (model) {
 										$author$project$Footer$btn,
 										_List_fromArray(
 											[
-												$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Types$SubmitMessage),
+												$rtfeldman$elm_css$Html$Styled$Events$onClick(
+												(model.apiKey === '') ? $author$project$Types$SubmitApiKey : $author$project$Types$SubmitMessage),
 												$rtfeldman$elm_css$Html$Styled$Attributes$type_('button')
 											]),
 										_List_fromArray(
@@ -10270,14 +10280,28 @@ var $author$project$Home$view = function (model) {
 									function (choice) {
 										return A2($author$project$Home$viewMessage, choice, model.isLoading);
 									},
-									model.choices))
+									model.choices)),
+								model.isLoading ? A2(
+								$rtfeldman$elm_css$Html$Styled$div,
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Html$Styled$Attributes$class('lds-circle')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$rtfeldman$elm_css$Html$Styled$div,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$rtfeldman$elm_css$Html$Styled$text('')
+											]))
+									])) : $rtfeldman$elm_css$Html$Styled$text('')
 							])),
 						$author$project$Footer$appFooter
 					]))
 			]));
 };
-var $rtfeldman$elm_css$Html$Styled$ul = $rtfeldman$elm_css$Html$Styled$node('ul');
-var $rtfeldman$elm_css$Html$Styled$p = $rtfeldman$elm_css$Html$Styled$node('p');
 var $author$project$Docs$viewMessage = function (message) {
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
@@ -10292,8 +10316,7 @@ var $author$project$Docs$viewMessage = function (message) {
 				_List_fromArray(
 					[
 						_Utils_eq(message.role, $author$project$Types$User) ? $author$project$Home$viewUserMessage(message) : A2($author$project$Home$viewAssistantMessage, message, false)
-					])),
-				A2($rtfeldman$elm_css$Html$Styled$p, _List_Nil, _List_Nil)
+					]))
 			]));
 };
 var $author$project$Docs$viewDetail = F2(
@@ -10327,7 +10350,14 @@ var $author$project$Docs$viewDetail = F2(
 					_List_fromArray(
 						[
 							A2(
-							$rtfeldman$elm_css$Html$Styled$ul,
+							$rtfeldman$elm_css$Html$Styled$h1,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$text('Conversation Detail')
+								])),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
 							_List_Nil,
 							A2($elm$core$List$map, $author$project$Docs$viewMessage, model.detailPage.messages))
 						])),

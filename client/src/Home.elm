@@ -38,7 +38,8 @@ view model = styled div [margin (px 0), paddingBottom (px 100)] []
             else 
                 [ text "" ]
         ),
-        div [] (List.map (\choice -> viewMessage choice model.isLoading) model.choices)
+        div [] (List.map (\choice -> viewMessage choice model.isLoading) model.choices),
+        if model.isLoading then div [class "lds-circle"] [div [] [text ""]] else text ""
   ]
   , appFooter
   ]]
@@ -99,7 +100,7 @@ viewAssistantMessage message isLoading =
     ]
     []
     [
-        if isLoading then text "Loading..." else text message.content
+        text message.content
     ]
 
 chatMessages : String -> Model -> ChatCompletion
