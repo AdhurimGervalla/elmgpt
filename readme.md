@@ -6,16 +6,18 @@ bei der chatGPT Anfragen und Antworten verwaltet werden können.
 ## Voraussetzungen
 
 - Elm (https://elm-lang.org/)
-- elm-live (optional, für Live-Entwicklung: https://github.com/wking-io/elm-live)
+- elm-live (https://github.com/wking-io/elm-live)
 
 ## Installation
 
-1. Elm installieren:
-   Besuche die offizielle Elm-Website (https://elm-lang.org/) und folge dort den Anweisungen.
+1. Elm und elm-live müssen installiert sein.
 
 ## Projekt einrichten
 
 1. Klone das Repository auf deinem lokalen Computer.
+```
+git clone https://github.com/MFJonesX/elmgpt.git
+```
 
 2. Navigieren in der Kommandozeile oder dem Terminal zum Projektordner.
 
@@ -25,7 +27,7 @@ bei der chatGPT Anfragen und Antworten verwaltet werden können.
    cd server
    ```
 2. Entpacke das passende zip-File. Achtung bei Mac User die richitge CPU Architektur anwenden.
-3. Nunn sollte es eine Datei `pocketbase` im Verzeichnis `Server` geben.
+3. Nunn sollte es eine Datei `pocketbase` im Verzeichnis `Server` geben. Achtung je nach dem muss die `pocketbase` aus dem erzeugten Ordner in das `Server` Verzeichnis reingeschoben werden.
 
 ## Projekt starten
 ### Mac
