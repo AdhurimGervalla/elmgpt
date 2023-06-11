@@ -6572,7 +6572,7 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{page: newPage, url: url}),
-					$elm$core$Platform$Cmd$none);
+					$author$project$Home$getSuggestedQuestionsCmd);
 			case 'GotResponse':
 				var result = msg.a;
 				if (result.$ === 'Ok') {

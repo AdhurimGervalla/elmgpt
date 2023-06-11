@@ -104,7 +104,7 @@ update msg model =
                         _ -> HomePage
             in
             ( { model | url = url, page = newPage }
-            , Cmd.none
+            , getSuggestedQuestionsCmd
             )
         GotResponse result ->
             case result of
