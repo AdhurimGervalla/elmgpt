@@ -41,3 +41,9 @@ Führe das start.sh Sctipt aus:
 ```
 ### Login
 Beim ersten Startup, muss ein Admin Login erstellt werden. Die DB Architektur würde über die `pb_migrations` Dateien gehandelt.
+1. Rufen sie dafür folgende URL auf: `127.0.0.1:8090/_/`
+2. Geben Sie irgendwelche Login Daten ein (Sie erstellen einen Admin Account)
+
+### App testen
+Sie können nun `localhost:8000` aufrufen um die Elm Applikation zu testen.  
+Den API-Key erhalten sie per Mail.
